@@ -118,6 +118,30 @@
             transition: background 0.2s;
         }
         .btn:hover { background-color: #002d54; }
+        
+        /* Informações de Cabeçalho da Vacina */
+        .info-header-box {
+            background-color: #F0F4F8;
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 6px 6px 0;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+        .info-header-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .info-header-item span:first-child {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
         .table-responsive {
             overflow-x: auto;
             border: 1px solid var(--border);
@@ -155,6 +179,7 @@
         }
         .badge-auth { background: #DCFCE7; color: #166534; }
         .badge-danger { background: #FEE2E2; color: #991B1B; }
+        .badge-mnem { background: #E0F2FE; color: #0369A1; font-family: monospace; }
         
         .text-block {
             white-space: pre-wrap;
@@ -218,13 +243,20 @@
 
     <!-- ABA 2: VACINAS -->
     <div id="vacinas" class="tab-content">
+        <!-- Linha informativa superior fixa -->
+        <div class="info-header-box">
+            <div class="info-header-item"><span>📅 Validade Pedido Médico</span><span><b>30 Dias</b></span></div>
+            <div class="info-header-item"><span>🏢 Unidade Metrópole</span><span>Posto: <b>403</b> / Fonte: <b>PARTICULAR - 2754</b></span></div>
+            <div class="info-header-item"><span>💻 Loja / Ecommerce</span><span>Posto: <b>1428</b> / Fonte: <b>ECOMMERCE - 8791</b></span></div>
+        </div>
+
         <div class="search-container">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchVacinas" class="search-box" placeholder="Busque por Nome da Vacina, Idade, Dose ou Observações..." onkeyup="filtrarVacinas()">
+            <input type="text" id="searchVacinas" class="search-box" placeholder="Busque por Nome da Vacina, Mnemônico, Prevenção, Idade ou Observação..." onkeyup="filtrarVacinas()">
         </div>
 
         <div class="actions">
-            <div class="counter" id="counterVacinas">Mostrando vacinas cadastráveis...</div>
+            <div class="counter" id="counterVacinas">Carregando vacinas...</div>
             <button class="btn" onclick="window.print()">📄 Salvar como PDF / Imprimir</button>
         </div>
 
@@ -232,29 +264,174 @@
             <table id="vacinasTable">
                 <thead>
                     <tr>
-                        <th style="width: 20%">VACINA</th>
-                        <th style="width: 15%">INDICAÇÃO / IDADE</th>
-                        <th style="width: 15%">ESQUEMA DE DOSES</th>
-                        <th style="width: 30%">PRINCIPAIS REGRAS / OBSERVAÇÕES</th>
-                        <th style="width: 20%">RESTRIÇÕES / CONTRAINDICAÇÕES</th>
+                        <th style="width: 15%">VACINA</th>
+                        <th style="width: 10%">MNEMÔNICO</th>
+                        <th style="width: 20%">PREVENÇÃO</th>
+                        <th style="width: 15%">IDADE</th>
+                        <th style="width: 15%">ESQUEMA VACINAL</th>
+                        <th style="width: 25%">OBSERVAÇÕES / REGRAS</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Exemplo de linha de Vacina (substitua ou adicione conforme necessário) -->
                     <tr>
-                        <td><b>TRÍPLICE VIRAL</b></td>
-                        <td>A partir de 12 meses</td>
-                        <td>2 doses (com intervalo de 30 dias)</td>
-                        <td><p class="text-block">Protege contra Sarampo, Caxumba e Rubéola.
-Registrar lote atentamente na shift.</p></td>
-                        <td>Gestantes e imunossuprimidos graves.</td>
+                        <td><b>ABRYSVO - GESTANTE</b></td>
+                        <td><span class="badge badge-mnem">ABRYGEST</span></td>
+                        <td><div class="text-block">VÍRUS SINCICIAL RESPIRATÓRIO (BRONQUIOLITE)<br>⚠️ A proteção é para a criança até 6 meses de vida.</div></td>
+                        <td>Apenas para gestantes (32 a 36 semanas)</td>
+                        <td>DOSE ÚNICA</td>
+                        <td><div class="text-block">⚠️ OBRIGATÓRIO TERMO<br>✔️ Vacina da Abrysvo para gestantes, só precisa do pedido médico se menor que 18 anos e idade gestacional de 24 a 27 semanas.</div></td>
                     </tr>
                     <tr>
-                        <td><b>INFLUENZA (GRIPE)</b></td>
-                        <td>A partir de 6 meses</td>
-                        <td>Anual (Dose única)</td>
-                        <td><p class="text-block">Crianças de 6 meses a 9 anos tomando pela primeira vez necessitam de 2 doses com intervalo de 30 dias.</p></td>
-                        <td>Histórico de alergia grave a ovo (com anafilaxia).</td>
+                        <td><b>BEYFORTUS</b></td>
+                        <td><span class="badge badge-mnem">VSRBEBE<br>VSRBEBE2</span></td>
+                        <td><div class="text-block">BRONQUIOLITE</div></td>
+                        <td>Criança a partir de 5 KG</td>
+                        <td><div class="text-block">- BEYFORTUS - VSR (0,5 ml): Criança menor de 5KG<br>- BEYFORTUS - VSR (1 ml): Criança a partir de 5 KG</div></td>
+                        <td><div class="text-block">⚠️ A partir de 8 meses é OBRIGATÓRIO pedido médico.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>DENGUE</b></td>
+                        <td><span class="badge badge-mnem">QDENGA1<br>QDENGA2</span></td>
+                        <td><div class="text-block">Existem 4 sorotipos do vírus da dengue.</div></td>
+                        <td>A partir de 4 a 60 anos</td>
+                        <td>2 doses (Intervalo de 3 meses da 1ª)</td>
+                        <td><div class="text-block">⚠️ OBRIGATÓRIO TERMO para pacientes em idade fértil.<br>⚠️ Avisar o paciente que a vacina demora 15 minutos para estabilizar.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>DTPA (ADULTO)</b></td>
+                        <td><span class="badge badge-mnem">DTPAR</span></td>
+                        <td><div class="text-block">Difteria, Tétano e Coqueluche</div></td>
+                        <td>A partir de 4 anos sem limite de idade</td>
+                        <td>Reforço para criança de 4 anos</td>
+                        <td><div class="text-block">✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>DTPA + VIP (CRIANÇA)</b></td>
+                        <td><span class="badge badge-mnem">dTpa+VIP</span></td>
+                        <td><div class="text-block">Difteria, Tétano e Coqueluche</div></td>
+                        <td>A partir de 4 anos sem limite de idade</td>
+                        <td>Reforço a cada 10 anos</td>
+                        <td><div class="text-block">✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>EFLUELDA</b></td>
+                        <td><span class="badge badge-mnem">EFLUELDA</span></td>
+                        <td><div class="text-block">Vacina que previne infecção por 4 vírus que causam a gripe para maiores de 60 anos.</div></td>
+                        <td>A partir de 60 anos</td>
+                        <td>Dose única anual.</td>
+                        <td><div class="text-block">Indicada para imunização de idosos com idade igual ou superior a 60 anos. Além de pessoas de risco clínico e portadores de comorbidades - Doenças crônicas: respiratórias, cardíaca, renal, neurológica; Diabetes mellitus tipo I e II, Imunossupressão; Imunodeficiência; Transplantados (órgãos sólidos e medula óssea) e portadores de trissomia.<br>⚠️ Para esses públicos, é necessário acompanhamento médico para indicação da vacina.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>HEPATITE A</b></td>
+                        <td><span class="badge badge-mnem">HEPA1</span></td>
+                        <td><div class="text-block">Previne inflamação no fígado causada pelo vírus da Hepatite A.</div></td>
+                        <td>A partir de 1 ano sem limite de idade</td>
+                        <td>2 DOSES - Com intervalo de 0 - 6 meses</td>
+                        <td><div class="text-block">✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>HEPATITE A e B</b></td>
+                        <td><span class="badge badge-mnem">HEPAB1</span></td>
+                        <td><div class="text-block">Inflamação que acomete o fígado, órgão do sistema digestório responsável pela desintoxicação do organismo.</div></td>
+                        <td>A partir de 1 ano sem limite de idade</td>
+                        <td>3 DOSES (Igual esquema HPV)</td>
+                        <td><div class="text-block">✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>HEPATITE B</b></td>
+                        <td><span class="badge badge-mnem">HEPBI2</span></td>
+                        <td><div class="text-block">Inflamação que acomete o fígado.</div></td>
+                        <td>SÓ TEM INFANTIL</td>
+                        <td>Conforme esquema padrão</td>
+                        <td><div class="text-block">⚠️ ADULTO SOMENTE NO POSTO.<br>⚠️ PEDIDO MÉDICO OBRIGATÓRIO.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>HERPES ZOSTER</b></td>
+                        <td><span class="badge badge-mnem">HZOSTER1<br>HZOSTER2</span></td>
+                        <td><div class="text-block">O mesmo vírus que causa a catapora. A reativação ocorre na idade adulta ou pessoas com comprometimento imunológico.</div></td>
+                        <td>A partir de 50 anos</td>
+                        <td>2 doses com intervalo de 2 meses</td>
+                        <td><div class="text-block">⚠️ OBRIGATÓRIO TERMO EM TODAS AS APLICAÇÕES.<br>✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO a partir de 50 anos.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>HPV9 - ACIMA DE 20 ANOS</b></td>
+                        <td><span class="badge badge-mnem">HPV9D1E2<br>HPV9D2E2<br>HPV9D3</span></td>
+                        <td><div class="text-block">Infecção sexualmente transmissível. Está associado ao desenvolvimento dos cânceres do colo do útero, e diversos outros tumores em homens e mulheres.</div></td>
+                        <td>Acima de 20 anos até 45 anos</td>
+                        <td>3 DOSES:<br>- 1ª dose: data a escolher;<br>- 2ª dose: 2 meses após a primeira;<br>- 3ª dose: 6 meses após a primeira.</td>
+                        <td><div class="text-block">✔️ De 9 a 45 anos SEM PEDIDO MÉDICO.<br>⚠️ A partir de 45 anos É NECESSÁRIO PEDIDO MÉDICO.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>HPV9 - ATÉ 19 ANOS</b></td>
+                        <td><span class="badge badge-mnem">HPV9D1E1<br>HPV9D2E1</span></td>
+                        <td><div class="text-block">Infecção sexualmente transmissível. Associado ao desenvolvimento de cânceres do colo do útero e outros tumores.</div></td>
+                        <td>De 9 até 19 anos (19 anos, 11 meses e 29 dias)</td>
+                        <td>2 DOSES:<br>Recomenda-se duas doses com intervalo de seis meses entre elas (0-6 meses) para não vacinados anteriormente.</td>
+                        <td><div class="text-block">✔️ De 9 a 45 anos SEM PEDIDO MÉDICO.<br>⚠️ A partir de 45 anos É NECESSÁRIO PEDIDO MÉDICO.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>INFLUENZA</b></td>
+                        <td><span class="badge badge-mnem">INFLUQAD</span></td>
+                        <td><div class="text-block">Gripe - Vacina que previne infecção por 4 vírus que causam a gripe.</div></td>
+                        <td>A partir de 6 meses de idade e adultos sem limite</td>
+                        <td><div class="text-block">- Crianças de 6 meses a 8 anos: duas doses na primeira vez (primovacinação), com intervalo de 1 mês. Dose única nos anos seguintes.<br>- A partir de 9 anos: dose única anual.</div></td>
+                        <td><div class="text-block">✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>MENINGO ACWY</b></td>
+                        <td><span class="badge badge-mnem">--</span></td>
+                        <td><div class="text-block">Inflamação das membranas que protegem o cérebro e a medula espinhal - Cobre 4 tipos.</div></td>
+                        <td>A partir de 3 meses sem limite de idade</td>
+                        <td>Acima de 11 anos: DOSE ÚNICA</td>
+                        <td><div class="text-block">Consultar esquema vacinal para menores de 11 anos se necessário.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>MENINGO B</b></td>
+                        <td><span class="badge badge-mnem">--</span></td>
+                        <td><div class="text-block">Meningite bacteriana causada pela bactéria Meningococo B.</div></td>
+                        <td>A partir de 3 meses a 50 anos</td>
+                        <td>Acima de 2 anos: DOSE ÚNICA</td>
+                        <td><div class="text-block">✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>PNEUMO 15</b></td>
+                        <td><span class="badge badge-mnem">PNEUMO15</span></td>
+                        <td><div class="text-block">Pneumo bacteriana e Meningite, ajuda na parte alérgica (Rinite, Sinusite e Otite).</div></td>
+                        <td>A partir de 2 meses sem limite de idade</td>
+                        <td>DOSE ÚNICA</td>
+                        <td><div class="text-block">✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>PNEUMO 20</b></td>
+                        <td><span class="badge badge-mnem">PNEUMO20</span></td>
+                        <td><div class="text-block">Pneumo bacteriana e Meningite, ajuda na parte alérgica (Rinite, Sinusite e Otite).</div></td>
+                        <td>A partir de 2 meses sem limite de idade</td>
+                        <td>DOSE ÚNICA</td>
+                        <td><div class="text-block">✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>PNEUMO 23</b></td>
+                        <td><span class="badge badge-mnem">PNEU23RP</span></td>
+                        <td><div class="text-block">Pneumo bacteriana e Meningite, ajuda na parte alérgica (Rinite, Sinusite e Otite).</div></td>
+                        <td>Adultos maiores de 60 anos (ou de 2 a 60 em condições especiais)</td>
+                        <td>2 doses com intervalo de 5 anos.<br>Se as duas doses foram feitas abaixo de 60 anos, é indicada uma dose adicional após os 60 anos.</td>
+                        <td><div class="text-block">⚠️ OBRIGATÓRIO apresentar pedido médico para menores de 60 anos.<br>Recomendada para pacientes com condições clínicas especiais entre 2 e 60 anos.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>VARICELA</b></td>
+                        <td><span class="badge badge-mnem">VARICE1</span></td>
+                        <td><div class="text-block">Contra o vírus da catapora.</div></td>
+                        <td>Qualquer idade</td>
+                        <td>2 doses com intervalo de 30 dias</td>
+                        <td><div class="text-block">✔️ Não é necessário pedido médico.<br>⚠️ ASSINAR TERMO de vacinas de vírus vivos.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>VRS - IDOSOS (AREXVY)</b></td>
+                        <td><span class="badge badge-mnem">AREXVY</span></td>
+                        <td><div class="text-block">Vírus Sincicial Respiratório (Bronquiolite) em Idosos.</div></td>
+                        <td>A partir de 60 anos</td>
+                        <td>Conforme orientação do fabricante</td>
+                        <td><div class="text-block">✔️ NÃO É NECESSÁRIO PEDIDO MÉDICO acima de 60 anos.</div></td>
                     </tr>
                 </tbody>
             </table>
@@ -275,14 +452,14 @@ const dadosConvenios = [
     { name: "BRADESCO OP. DE PLANOS\n- CARTEIRINHA PRATA (954/956)", font: "9612", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "AUTORIZADOR WS", obs: "QUANTIDADE DE EXAMES (contar e colocar na shift)\n- CAPA BRADESCO\n- PACIENTE ASSINA O PEDIDO\n- Renomear: PM + nome paciente e nº da guia (ANEXAR NA SHIFT E NO SITE)", contact: "*Só poderemos atender mediante AUTORIZAÇÃO. Aguardar retorno do SITE.\nCódigo do Prestador: 095834.\nTelefones: 4004-2700 /0800-7012700 e 4004-4580." },
     { name: "BRADESCO SAUDE DF\nSENHA ALFANUMERICA", font: "3527", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- AUTORIZAÇÃO SITE - IMPRIMIR GUIA\n- EXECUTAR NA ORIZON - IMPRIMIR GUIA\n(Todo procedimento que necessita de SENHA ALFA NUMÉRICA, deve ser EXECUTADO no Portal Orizon, no DIA da realização)", contact: "Código do Prestador: 095834.\nTelefones: 4004-2700 /0800-7012700 e 4004-4580." },
     { name: "BRASILMED", font: "37", val: "NÃO É NECESSÁRIO", rules: "PACIENTE TRAZ O ENCAMINHAMENTO\n- PACIENTE ASSINA O ENCAMINHAMENTO", auth: "GUIA PRÓPRIA", obs: "Paciente traz a guia de encaminhamento e assina.", contact: "Telefone: (61) 3032-9500 (Sra. Josi)." },
-    { name: "BRB SAUDE", font: "7763", val: "30 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- GUIA SHIFT\n- AUTORIZAÇÃO SITE\n- ELEGIBILIDADE\n- PACIENTE ASSINA O PEDIDO\n- CÓPIA DO DOC E CARTEIRINHA\n\n⚠️ SOLICITANTE NÃO LOCALIZADO: Deixar campos de 13 a 19 em branco. O BRB NÃO ACEITA a expressão 'MÉDICO NÃO CADASTRADO'. No campo '13' deve constar o código 00003-1.", contact: "Quando trouxer mais de um pedido médico com solicitante diferente, pegar uma autorização para cada.\nImprimir a GUIA SP/SADT MANUAL se o site estiver fora, colher assinatura e quando retornar, associar." },
+    { name: "BRB SAUDE", font: "7763", val: "30 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- GUIA SHIFT\n- AUTORIZAÇÃO SITE\n- ELEGIBILIDADE\n- PACIENTE ASSINA O PEDIDO\n- CÓPIA DO DOC E CARTEIRINHA\n\n⚠️ SOLICITANTE NÃO LOCALIZADO: Deixar campos de 13 a 19 em branco. O BRB NÃO ACEITA a expression 'MÉDICO NÃO CADASTRADO'. No campo '13' deve constar o código 00003-1.", contact: "Quando trouxer mais de um pedido médico com solicitante diferente, pegar uma autorização para cada.\nImprimir a GUIA SP/SADT MANUAL se o site estiver fora, colher assinatura e quando retornar, associar." },
     { name: "BRB SAUDE PERIODICO/ADMISSIONAL", font: "179", val: "--", rules: "PACIENTE TRAZ O ENCAMINHAMENTO\n- PACIENTE ASSINA O ENCAMINHAMENTO - (endereçada ao SABIN)", auth: "--", obs: "ENVIAR GUIA PREENCHIDA PARA O FATURAMENTO:\nCODIGO DO CONVENIADO: 02160\nNOME DO CONVENIADO: BATER O CARIMBO\nVALOR TOTAL: VERIFICAR NA SHIFT\nQUANTIDADE: 01\nDATA: DA REALIZAÇÃO DO EXAME", contact: "Código credenciamento junto ao BRB Saúde (02160).\nTelefones: (61) 3035-9421 / 3035-9422" },
     { name: "CAESAN", font: "9949", val: "30 DIAS", rules: "- Aceita pedido médico de CRO, COREN e CRN\n- Não aceita pedido médico cópia, apenas se o Pedido for da própria Caesan", auth: "SITE", obs: "- GUIA SHIFT\n- AUTORIZAÇÃO DO SITE\n- ELEGIBILIDADE", contact: "⚠️ NÃO ACEITA AUTORIZAÇÃO com data POSTERIOR." },
     { name: "CAMARA DOS DEPUTADOS - PRO SAUDE", font: "18164", val: "30 DIAS", rules: "Aceita (CRM)\nAceita cópia de pedido LEGÍVEL ✅", auth: "AUTORIZADOR WS/ SITE", obs: "⚠️ ATENÇÃO EXAMES: INFLUAB / SARSCOV2 / INFLUPC / RSVPCR / CLAPCRD / CITOML / BCRABLQT / HPVGENO /CLAPCR\nSolicitar autorização sempre MANUAL direto no portal (WS não gera a senha).\n- Inserir a SENHA na shift e anexar na O.S\n- Não aceita Assinatura em ANEXO.", contact: "WS INOPERANTE Portal:\nhttps://autorizadorcamara.bennercloud.com.br/autorizador/custom/CustomLogin.aspx\nLogin: 00718528000109 | Senha: Nibas@2024\n► Esta fonte pagadora não aceita autorização posterior.\nSITE INOPERANTE: ligar para 0800-729-2326 (24h)" },
     { name: "CAPESAUDE", font: "38", val: "30 DIAS", rules: "Aceita (CRM e CRO)\nACEITA PEDIDO CÓPIA DIGITALIZADO ✅", auth: "NÃO TEM (WS)", obs: "Os exames com ALERTAS são necessários solicitar AUTORIZAÇÃO\n- Ordem de Escritório\n- AUTORIZAÇÃO SITE (SOMENTE OS QUE ALERTAREM)\n- ELEGIBILIDADE\n- GUIA SHIFT", contact: "Site Inoperante/ Senhas de Autorização:\nZAP- (21) 97625-6980\nE-mail: suportecontasmedicas@capesesp.com.br" },
     { name: "CARE PLUS", font: "89", val: "30 DIAS", rules: "CID obrigatório\nAceita (CRM, CRO e CRN)\nnão aceita cópia de pedido", auth: "ORIZON / SITE", obs: "Autorização Somente para os exames que alertarem na SHIFT / AUTORIZAÇÃO VIA ORIZON. Caso não autorize na Orizon, solicitar pelo site da Careplus\n- CÓPIA DO CARTÃO DE IDENTIFICAÇÃO", contact: "Telefone: (11) 4197-9000\nCentral: 0800 407 9000\nCódigo Prestador: 460371" },
     { name: "CASEMBRAPA", font: "1254", val: "360 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "AUTORIZADOR WS", obs: "- ELEGIBILIDADE\n- PACIENTE ASSINA O PEDIDO\n- Solicitar AUTORIZAÇÃO apenas de exames que alertam via e-mail: autorizacaomedica.pasbc.depes@bcb.gov.br", contact: "CASEMBRAPA ESPECIAIS PASSO A PASSO:\nWEB SAUDE > SOLICITAÇÕES > SOLICITAÇÕES DE SP-SADT > NOVA SOLICITAÇÃO > PREENCHER > ANEXAR ARQUIVOS (Clica no + , nos 3 pontinhos, download e anexa)" },
-    { name: "CASSI / CASSI VIDA", font: "2709 / 18094", val: "90 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "AUTORIZADOR WS", obs: "- PACIENTE ASSINA O PEDIDO\n⚠️ WEB SERVICE INOPERANTE: as autorizações devem ser solicitadas diretamente no site da Orizon. Preencher os campos 'Senha/Autorização' e 'Guia Prestador' na Shift com o número gerado.\nORIZON INOPERANTE: Ligue na Cassi.", contact: "Central Cassi: 4004-4550 ou 0800-729-0090\nCódigo do Prestador Sabin: 157724\n💢 NÃO ACEITA AUTORIZAÇÃO POSTERIOR.\nCHAT ONLINE: https://servicosonline.cassi.com.br/GASC/v2/Prestador\nLogin: CPF completo | Senha: seu e-mail sem @sabin.com.br + 3 primeiros dígitos do CPF" },
+    { name: "CASSI / CASSI VIDA", font: "2709 / 18094", val: "90 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "AUTORIZADOR WS", obs: "- PACIENTE ASSINA O PEDIDO\n⚠️ WEB SERVICE INOPERANTE: as autorizações devem ser solicitadas diretamente no site da Orizon. Preencher os campos 'Senha/Autorização' e 'Guia Prestador' na Shift com o número gerado.\nORIZON INOPERANTE: Ligue na Cassi.", contact: "Central Cassi: 4004-4550 ou 0800-729-0090\nCódigo do Prestador Sabin: 157724\nCNI NÃO ACEITA AUTORIZAÇÃO POSTERIOR.\nCHAT ONLINE: https://servicosonline.cassi.com.br/GASC/v2/Prestador\nLogin: CPF completo | Senha: seu e-mail sem @sabin.com.br + 3 primeiros dígitos do CPF" },
     { name: "CEAM BRASIL", font: "1879", val: "30 DIAS", rules: "A partir do dia 08/10/2024, estará SUSPENSO!!!", auth: "--", obs: "Atendimento suspenso conforme comunicado.", contact: "--" },
     { name: "CIGNA", font: "3309", val: "--", rules: "Não tem regras fixas de conselho. Verificar porcentagem de pagamento na elegibilidade.\nPaciente assina pedido médico.", auth: "NÃO TEM", obs: "Anexar no atendimento os seguintes documentos:\n🔹Orçamento; Elegibilidade; Pedido médico; Identidade; Carteirinha (frente e verso); Carta de Garantia (se aplicável).\nO número da carteirinha corresponde ao campo 'Pers. ref. nº'", contact: "📧 CONTATO VIA E-MAIL:\nDúvidas: authorization@cigna.com\nOutras perguntas: providernetwork@CignaHealthcare.com\nReivindicações: providerquestions2@CignaHealthcare.com" },
     { name: "CNU UNIMED\n- DEMAIS MATRICULAS / 865/067/229", font: "12740 / 12739", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA. Obrigatório CID ou Indicação Clínica.", auth: "WS / SITE", obs: "- AUTORIZAÇÃO WS ou SITE\n- IMPRIMIR GUIA NO SITE\nSite: http://saw.trixti.com.br/saw/Logar.do?method=abrirSAW\nCódigo Prestador: 002305275\nInformar o número gerado na Shift no campo 2 do SAW para evitar duplicidade.", contact: "⚠️ SITE INOPERANTE (Matrícula 865 / Fonte 12739): Preencher guia manual Unimed, assinada pelo paciente. Ligar no (11) 2505-1111 p/ ver elegibilidade. Quando o site voltar, lançar.\nImportante: Demais Unimeds Intercâmbio SÓ ATENDER após o site retornar.\nSolicitações extracontratuais devem ser feitas pelo beneficiário na Unimed de origem." },
@@ -300,7 +477,7 @@ const dadosConvenios = [
     { name: "INAS", font: "1252", val: "460 DIAS", rules: "Só aceita (CRM)\nACEITA CÓPIA DO PEDIDO ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE - especialidade da guia: PATOLOGIA CLINICA\n- CAPTURAR GUIA APOS AUTORIZAÇÃO\n- COPIA DO DOC E CARTEIRINHA", contact: "Solicite com o código 6777 ('Responsável não atualizado')." },
     { name: "INTERMEDICA", font: "2145", val: "60 DIAS", rules: "Aceita pedidos de médicos (CRM e RMS)", auth: "SITE", obs: "- SITE\n- ELEGIBILIDADE\n- TOKEN", contact: "Grupo NotreDame Intermédica." },
     { name: "IPASGO", font: "20230", val: "--", rules: "Não há regras específicas, desde que todos os exames estejam autorizados no sistema.", auth: "SITE", obs: "⚠️ COMUNICAÇÃO INTERNA N° 015/2025: Todas as guias deverão ser encaminhadas para o faturamento SAAN.\n1. Autorização SP/SADT assinada pelo beneficiário.\n2. Encaminhamento assinado pelo beneficiário.\n3. Pedido médico (quando houver).\nCONFERIR SE OS CÓDIGOS BATEM COM A AUTORIZAÇÃO.", contact: "Portal IPASGO." },
-    { name: "IPASVAL", font: "1586", val: "60 DIAS", rules: "- Aceita CRM, CRN e COREM. Não aceita cópia.\n- Não aceita rasura. Só aceita inclusão a caneta se o médico carimbar e assinar abaixo.\n- Obrigatório ter CID no pedido.", auth: "SITE", obs: "Usuário: sabinipasval | Senha: Sabin123\nMenu principal > saude > prestador > emissão de guias (recepcionistas).\nGuia tipo 2 (exames). Se a carência ficar VERMELHA, o beneficiário deve ligar no convênio. Se VERDE, apto. Salvar, adicionar pedido, enviar e autorizar.", contact: "Pesquisar guia na lupinha em emissão de guia." },
+    { name: "IPASVAL", font: "1586", val: "60 DIAS", rules: "- Aceita CRM, CRN e COREM. Não aceita cópia.\n- Não aceita rasura. Só aceita inclusion a caneta se o médico carimbar e assinar abaixo.\n- Obrigatório ter CID no pedido.", auth: "SITE", obs: "Usuário: sabinipasval | Senha: Sabin123\nMenu principal > saude > prestador > emissão de guias (recepcionistas).\nGuia tipo 2 (exames). Se a carência ficar VERMELHA, o beneficiário deve ligar no convênio. Se VERDE, apto. Salvar, adicionar pedido, enviar e autorizar.", contact: "Pesquisar guia na lupinha em emissão de guia." },
     { name: "JUSTICA FEDERAL DO DF", font: "1224", val: "90 DIAS", rules: "Aceita CRM (CRN e CRO verificar na shift).\nAceita cópia de pedido DIGITALIZADO ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- ELEGIBILIDADE", contact: "Portal da Justiça Federal." },
     { name: "LIFE EMPRESARIAL", font: "525", val: "30 DIAS", rules: "Só aceita CRM.\nAceita cópia ✅", auth: "PACIENTE TRAZ", obs: "- GUIA PORTAL / GUIA SHIFT\nANEXAR NA SHIFT: Documento Paciente (Frente/Verso), Carteirinha, Elegibilidade, Autorização assinada e Pedido Médico Original.", contact: "Canais da Life Empresarial." },
     { name: "MEDISERVICE", font: "74", val: "30 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- GUIA SHIFT", contact: "Central Mediservice." },
@@ -384,6 +561,10 @@ function switchTab(tabId) {
     
     event.currentTarget.classList.add('active');
     document.getElementById(tabId).classList.add('active');
+    
+    if(tabId === 'vacinas') {
+        filtrarVacinas(); // Inicializa o contador de vacinas ao trocar de aba
+    }
 }
 
 // Filtro de Busca da Aba Vacinas
@@ -415,6 +596,9 @@ function filtrarVacinas() {
 
 // Renderização Inicial
 renderTable(dadosConvenios);
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("counterVacinas").textContent = `${document.querySelectorAll("#vacinasTable tbody tr").length} vacina(s) encontrada(s)`;
+});
 </script>
 
 </body>
