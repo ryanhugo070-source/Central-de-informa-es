@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Convênios</title>
+    <title>Central de Informações</title>
     <style>
         :root {
             --primary: #00427A; /* Azul Padrão */
@@ -33,6 +33,39 @@
             margin-top: 0;
             font-size: 24px;
         }
+        
+        /* Estilo das Abas (Tabs) */
+        .tabs-container {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 15px;
+            gap: 5px;
+        }
+        .tab-btn {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #666;
+            background: #E2E8F0;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            background: #CBD5E1;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
         .search-container {
             position: relative;
             margin: 15px 0;
@@ -131,8 +164,10 @@
 
         @media print {
             body { background: white; padding: 0; }
-            .search-container, .actions, .btn { display: none !important; }
+            .tabs-container, .search-container, .actions, .btn { display: none !important; }
             .container { box-shadow: none; padding: 0; max-width: 100%; }
+            .tab-content { display: none !important; }
+            .tab-content.active { display: block !important; }
             table { font-size: 10px; }
             th { background-color: #00427A !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             td, th { padding: 6px; border: 1px solid #CBD5E1 !important; }
@@ -142,38 +177,93 @@
 <body>
 
 <div class="container">
-    <h1>🔍 Manual de Regras de Convênios</h1>
+    <h1>📋 Central de Informações</h1>
     
-    <div class="search-container">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="search" class="search-box" placeholder="Busque por Convênio, Código da Fonte, Regras, Restrições ou Planos...">
+    <!-- Menu de Abas -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('convenios')">🔍 Regras de Convênios</button>
+        <button class="tab-btn" onclick="switchTab('vacinas')">💉 Vacinas</button>
     </div>
     
-    <div class="actions">
-        <div class="counter" id="counter">Carregando convênios...</div>
-        <button class="btn" onclick="window.print()">📄 Salvar como PDF / Imprimir</button>
+    <!-- ABA 1: CONVÊNIOS -->
+    <div id="convenios" class="tab-content active">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search" class="search-box" placeholder="Busque por Convênio, Código da Fonte, Regras, Restrições ou Planos...">
+        </div>
+        
+        <div class="actions">
+            <div class="counter" id="counter">Carregando convênios...</div>
+            <button class="btn" onclick="window.print()">📄 Salvar como PDF / Imprimir</button>
+        </div>
+
+        <div class="table-responsive">
+            <table id="conveniosTable">
+                <thead>
+                    <tr>
+                        <th style="width: 14%">CONVÊNIO</th>
+                        <th style="width: 8%">FONTE PAG.</th>
+                        <th style="width: 8%">VALIDADE P.M</th>
+                        <th style="width: 15%">REGRAS P.M</th>
+                        <th style="width: 10%">AUTORIZAÇÃO</th>
+                        <th style="width: 23%">PROTOCOLO / OBS</th>
+                        <th style="width: 22%">SITE INOPERANTE / CONTATOS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table id="conveniosTable">
-            <thead>
-                <tr>
-                    <th style="width: 14%">CONVÊNIO</th>
-                    <th style="width: 8%">FONTE PAG.</th>
-                    <th style="width: 8%">VALIDADE P.M</th>
-                    <th style="width: 15%">REGRAS P.M</th>
-                    <th style="width: 10%">AUTORIZAÇÃO</th>
-                    <th style="width: 23%">PROTOCOLO / OBS</th>
-                    <th style="width: 22%">SITE INOPERANTE / CONTATOS</th>
-                </tr>
-            </thead>
-            <tbody>
+    <!-- ABA 2: VACINAS -->
+    <div id="vacinas" class="tab-content">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchVacinas" class="search-box" placeholder="Busque por Nome da Vacina, Idade, Dose ou Observações..." onkeyup="filtrarVacinas()">
+        </div>
+
+        <div class="actions">
+            <div class="counter" id="counterVacinas">Mostrando vacinas cadastráveis...</div>
+            <button class="btn" onclick="window.print()">📄 Salvar como PDF / Imprimir</button>
+        </div>
+
+        <div class="table-responsive">
+            <table id="vacinasTable">
+                <thead>
+                    <tr>
+                        <th style="width: 20%">VACINA</th>
+                        <th style="width: 15%">INDICAÇÃO / IDADE</th>
+                        <th style="width: 15%">ESQUEMA DE DOSES</th>
+                        <th style="width: 30%">PRINCIPAIS REGRAS / OBSERVAÇÕES</th>
+                        <th style="width: 20%">RESTRIÇÕES / CONTRAINDICAÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Exemplo de linha de Vacina (substitua ou adicione conforme necessário) -->
+                    <tr>
+                        <td><b>TRÍPLICE VIRAL</b></td>
+                        <td>A partir de 12 meses</td>
+                        <td>2 doses (com intervalo de 30 dias)</td>
+                        <td><p class="text-block">Protege contra Sarampo, Caxumba e Rubéola.
+Registrar lote atentamente na shift.</p></td>
+                        <td>Gestantes e imunossuprimidos graves.</td>
+                    </tr>
+                    <tr>
+                        <td><b>INFLUENZA (GRIPE)</b></td>
+                        <td>A partir de 6 meses</td>
+                        <td>Anual (Dose única)</td>
+                        <td><p class="text-block">Crianças de 6 meses a 9 anos tomando pela primeira vez necessitam de 2 doses com intervalo de 30 dias.</p></td>
+                        <td>Histórico de alergia grave a ovo (com anafilaxia).</td>
+                    </tr>
                 </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
+// Lista de Dados de Convênios
 const dadosConvenios = [
     { name: "SAFFEGO", font: "1150", val: "30 DIAS", rules: "SÓ ACEITA (CRM)\nobrigatório CID ou Indicação clinica", auth: "SITE", obs: "- GUIA SHIFT\n- AUTORIZAÇÃO SITE\n- COMPROVANTE DE ATENDIMENTO (SITE)\n\n(O site irá gerar uma autorização SP/SADT mais COMPROVANTE de atendimento)\n- Quando o solicitante (Médico) não for localizado escrever no campo 'NAO'.", contact: "►Não prestar atendimento sem AUTORIZAÇÃO. - Aguardar retorno do site.\n\n► Entrar em contato no Fones: (62) 3218-5435 / 3096-7645 / 3096-7634.\nSuporte nesses casos: centralatendimento@affego.com.br" },
     { name: "AMIL", font: "9028", val: "90 DIAS", rules: "Só aceita (CRM e CRO)\nAceita pedido cópia/digitalizado\nobrigatório CID / DATA\nNão aceita pedido (CRN). Exceção se revalidado por médico (CRM)", auth: "AUTORIZADOR WS / SITE", obs: "TOKEN (inserir no site e na shift)\n- COMPROVANTE DE ATENDIMENTO (SITE)\n- ELEGIBILIDADE (ANEXAR NA SHIFT)\n- PACIENTE ASSINA O PEDIDO E DATA\n- Renomear: PM + nome paciente e nº da guia (ANEXAR NA SHIFT E NO SITE)", contact: "► A autorização deve ser DO DIA DO ATENDIMENTO. NÃO aceita posterior.\n\n► E casos e WS e site da Amil estiverem inoperante, consulte a elegibilidade e solicite as autorizações por telefone: 3003-2702 / 3004-2206 / 3004-1050 / 0800 706 1663.\n\n✔️ Código do Prestador: 10019600" },
@@ -239,55 +329,91 @@ const dadosConvenios = [
     { name: "SIS SENADO", font: "1054", val: "130 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "NÃO TEM", obs: "Solicitar autorização somente para os exames que alertarem no sistema.\n- GUIA SHIFT | COPIA DO DOC E CARTEIRINHA\n- ASSINATURA IGUAL O DOCUMENTO", contact: "SIS Senado Federal." },
     { name: "STF-MED", font: "1079", val: "60 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SISTEMA", obs: "Solicitar autorização SOMENTE para os exames que ALERTAREM na SHIFT.\n- ELEGIBILIDADE | GUIA SHIFT | COPIA DA CARTEIRINHA E DOC - ANEXAR O.S\n(Se tiver autorização, esta também deve ser assinada pelo beneficiário).", contact: "Supremo Tribunal Federal." },
     { name: "STJ", font: "5199", val: "--", rules: "Aceita (CRM, CRO e CRN)", auth: "SITE", obs: "- AUTORIZAÇÃO SITE | ELEGIBILIDADE | COMPROVANTE MEDICO HOSPITALAR\n- PACIENTE ASSINA O PEDIDO\n⚠️ OBS CADASTRO: QUANDO SOLICITAR PERFIL LIPIDOGRAMA - CADASTRAR: CTFRTRI", contact: "Superior Tribunal de Justiça." },
-    { name: "STM - PLAS/JMU", font: "152", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido DIGITALIZADO ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- ASSINATURA IGUAL O DOCUMENTO\n- CÓPIA DA CARTEIRINHA E DOC NA O.S\n⚠️ AUTORIZAÇÃO SEPARADA POR MÉDICO.\n⚠️ MÉDICO NÃO LOCALIZADO: digite '01220-0' (No campo 15) ou digite 'PROFISSIONAL GERAL'.", contact: "Superior Tribunal Militar." },
-    { name: "TJDF PERIÓDICO", font: "2071", val: "130 DIAS", rules: "Encaminhamento Obrigatório do Periódico do TJDF.\nCID Obrigatório. Aceita CRM, CRO e CRN. NÃO ACEITA CÓPIA DO PEDIDO.", auth: "SITE", obs: "Autorizações 100% pelo site Portal BENNER CONECTA.\n📌 Obrigatório preenchimento de MATRÍCULA E SENHA na Shift.\n- COMPROVANTE MEDICO HOSPITALAR e Pedido Médico.\n⚠️ MATRÍCULA: Passou a ser todos os dígitos da carteirinha (8 a 14 caracteres).\n⚠️ Marcar no campo 'Titular do Convênio' se ele é ou não o titular.\n⚠️ Exames devem estar 100% autorizados em Guia SADT (Não aceita 'em análise' ou 'envio pendente'). Grampear do lado ESQUERDO do papel A4.", contact: "🚫 NÃO ACEITA AUTORIZAÇÃO COM DATA POSTERIOR nem assinatura em anexo.\n⚠️ SITE COM INSTABILIDADE / INOPERANTE: Atender com a Guia Manual (o campo data NÃO pode conter rasura). Tire PRINT da tela com data/horário do erro e anexe na O.S. Quando o sistema voltar, realizar todo o processo no portal." },
-    { name: "TRE", font: "16", val: "30 DIAS", rules: "Aceita (CRM, CRO)", auth: "SISTEMA", obs: "Fluxo regular de validação do tribunal.", contact: "Tribunal Regional Eleitoral." },
-    { name: "TRF (PRO SOCIAL)", font: "1021", val: "90 DIAS", rules: "NÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- GUIA SHIFT / ELEGIBILIDADE\n- PACIENTE ASSINA O PEDIDO", contact: "⚠️ TRF não aceita autorização posterior e não aceita assinatura em anexo." },
-    { name: "TRT 10 REGIAO\n(TITULAR / DEPEND. AUTORIZADOS / PENSIONISTA / PRESUMIDOS)", font: "2114 / 2479", val: "90 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA FOTOCÓPIA DO PEDIDO", auth: "SITE", obs: "- OBRIGATÓRIO PEDIDO MÉDICO COM ASSINATURA DO PACIENTE\n- PACIENTE ASSINA O PEDIDO MÉDICO DATADO E COM CID\n- ORDEM DE ESCRITÓRIO LIMPA\n- ELEGIBILIDADE ANEXADA NA O.S", contact: "Tribunal Regional do Trabalho 10ª Região." },
-    { name: "TST", font: "79", val: "30 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- ELEGIBILIDADE\n- AUTORIZAÇÃO SITE / - GUIA SHIFT", contact: "Tribunal Superior do Trabalho." },
-    { name: "UNAFISCO", font: "18", val: "INDET.", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- GUIA SHIFT", contact: "Unafisco Saúde." },
-    { name: "UNIMED SEGUROS", font: "2169", val: "INDET.", rules: "Só aceita (CRM e CRO). NÃO ACEITA CÓPIA.\nCID IGUAL O PEDIDO NA SHIFT.", auth: "SITE", obs: "- ELEGIBILIDADE\n- AUTORIZAÇÃO SITE - SALVAR NA O.S (Não precisa imprimir nem assinar a autorização, só salvar na Shift).\n- PACIENTE ASSINA APENAS O PEDIDO\n- SCANEAR PEDIDO (Renomear: PM + nome paciente)\n⚠️ ATENÇÃO: Verificar na autorização se a quantidade autorizada está conforme a solicitação (BIOPSIA PRINCIPALMENTE).", contact: "Seguros Unimed." },
-    { name: "UNITY SAUDE", font: "1869", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- AUTORIZAÇÃO NO SITE (CÓDIGO DA OPERADORA: 00044-2)\n- GUIA SHIFT | COMPROVANTE MEDICO HOSPITALAR | CÓPIA DO DOC E CARTEIRINHA\n- DATA DO PEDIDO MEDICO NA SHIFT (Assinatura idêntica ao documento)\n⚠️ RUMO À GLOSA ZERO (Campos 13 a 19):\nCampo 13: Usar o código correto 00044-2.\nCampo 14: Nome do laboratório (Não deixar em branco).\nCampos 15 a 19 (Dados do Solicitante): Se não houver dados, preencher como MÉDICO ANÔNIMO. Se algum dado estiver em branco/incorreto, preencher o campo 58 da autorização de forma legível.", contact: "⚠️ ERRO 0688 NO CADASTRO DO PRESTADOR: Significa que o produto foi descredenciado." },
-    { name: "UNIVIDAS SAUDE", font: "2016", val: "60 DIAS", rules: "Aceita pedido médico de CRO e COREN (COREN depende do exame).\nNÃO ACEITA CÓPIA.", auth: "SITE", obs: "- CID no pedido médico\n- AUTORIZAÇÃO NO SITE\n- GUIA SHIFT\n- CÓPIA DO DOC E CARTEIRINHA\n- TOKEN (Confirmar atendimento no site - o token e a senha são o mesmo número).\nAssinatura idêntica ao documento.", contact: "⚠️ OBRIGATÓRIO TOKEN: Se o paciente não apresentar o token, o atendimento NÃO será possível.\nCaso o app de senhas não funcione, orientar o paciente a ligar no convênio para liberação interna:\nTelefone: 3003-0323 | WhatsApp: (11) 95288-2000" }
+    { name: "STM - PLAS/JMU", font: "152", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido DIGITALIZADO ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- ASSINATURA IGUAL O DOCUMENTO\n- CÓPIA DA CARTEIRINHA E DOC NA O.S\n⚠️ AUTORIZAÇÃO SEPARADA POR MÉDICO.\n⚠️ MÉDICO NÃO LOCALIZADO: digite '01220-0' (No campo 15) ou digite 'PROFISSIONAL GERAL'.", contact: "Superior Tribunal Militar." }
 ];
 
-function renderTable(data) {
-    const tbody = document.querySelector("#conveniosTable tbody");
-    if(data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#888; font-size:16px;">Nenhum convênio encontrado.</td></tr>`;
-        document.getElementById("counter").innerText = "0 convênios encontrados";
-        return;
-    }
-    
-    tbody.innerHTML = data.map(item => {
-        let authBadge = item.auth.includes("NÃO") ? "badge-danger" : "badge-auth";
-        return `
-        <tr>
-            <td><strong>${item.name.replace(/\n/g, '<br>')}</strong></td>
-            <td><span class="badge">${item.font}</span></td>
-            <td>${item.val}</td>
-            <td><div class="text-block">${item.rules}</div></td>
-            <td><span class="badge ${authBadge}">${item.auth}</span></td>
-            <td><div class="text-block">${item.obs}</div></td>
-            <td><div class="text-block">${item.contact}</div></td>
-        </tr>
-    `}).join('');
-    
-    document.getElementById("counter").innerText = `${data.length} convênio(s) listado(s)`;
+// Inicialização da Tabela de Convênios
+const tbody = document.querySelector("#conveniosTable tbody");
+const searchInput = document.getElementById("search");
+const counter = document.getElementById("counter");
+
+function formatText(text) {
+    if (!text) return "--";
+    return text
+        .replace(/✅/g, '<span class="badge badge-auth">✅</span>')
+        .replace(/⚠️/g, '<span class="badge badge-danger">⚠️</span>')
+        .replace(/✔️/g, '<span class="badge badge-auth">✔️</span>')
+        .replace(/♥️/g, '<span style="color:red">♥️</span>');
 }
 
-document.getElementById("search").addEventListener("input", (e) => {
-    const text = e.target.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const filtered = dadosConvenios.filter(item => {
-        const nameClean = item.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const fontClean = item.font.toLowerCase();
-        const rulesClean = item.rules.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const obsClean = item.obs.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        return nameClean.includes(text) || fontClean.includes(text) || rulesClean.includes(text) || obsClean.includes(text);
+function renderTable(data) {
+    tbody.innerHTML = "";
+    data.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><b>${item.name.replace(/\n/g, "<br>")}</b></td>
+            <td><span class="badge">${item.font}</span></td>
+            <td>${item.val}</td>
+            <td><div class="text-block">${formatText(item.rules)}</div></td>
+            <td><b>${item.auth}</b></td>
+            <td><div class="text-block">${formatText(item.obs)}</div></td>
+            <td><div class="text-block">${formatText(item.contact)}</div></td>
+        `;
+        tbody.appendChild(tr);
     });
+    counter.textContent = `${data.length} convênio(s) encontrado(s)`;
+}
+
+// Filtro de Busca da Aba Convênios
+searchInput.addEventListener("input", (e) => {
+    const term = e.target.value.toLowerCase();
+    const filtered = dadosConvenios.filter(item => 
+        item.name.toLowerCase().includes(term) ||
+        item.font.toLowerCase().includes(term) ||
+        item.rules.toLowerCase().includes(term) ||
+        item.obs.toLowerCase().includes(term) ||
+        item.contact.toLowerCase().includes(term)
+    );
     renderTable(filtered);
 });
 
+// Mecanismo de Alternância de Abas
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    event.currentTarget.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+}
+
+// Filtro de Busca da Aba Vacinas
+function filtrarVacinas() {
+    const input = document.getElementById("searchVacinas");
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById("vacinasTable");
+    const tr = table.getElementsByTagName("tr");
+    let count = 0;
+
+    for (let i = 1; i < tr.length; i++) {
+        let match = false;
+        const td = tr[i].getElementsByTagName("td");
+        for (let j = 0; j < td.length; j++) {
+            if (td[j] && td[j].innerText.toLowerCase().includes(filter)) {
+                match = true;
+                break;
+            }
+        }
+        if (match) {
+            tr[i].style.display = "";
+            count++;
+        } else {
+            tr[i].style.display = "none";
+        }
+    }
+    document.getElementById("counterVacinas").textContent = `${count} vacina(s) encontrada(s)`;
+}
+
+// Renderização Inicial
 renderTable(dadosConvenios);
 </script>
 
