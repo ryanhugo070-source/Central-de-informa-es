@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Convênios</title>
+    <style>
+        :root {
+            --primary: #00427A; /* Azul Padrão */
+            --accent: #E21B22;
+            --dark: #2A2A2A;
+            --light: #F8F9FA;
+            --border: #DDE2E5;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #EDF1F3;
+            color: var(--dark);
+            margin: 0;
+            padding: 15px;
+        }
+        .container {
+            max-width: 1450px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        h1 { 
+            text-align: center; 
+            color: var(--primary); 
+            margin-top: 0;
+            font-size: 24px;
+        }
+        .search-container {
+            position: relative;
+            margin: 15px 0;
+        }
+        .search-box {
+            width: 100%;
+            padding: 14px 14px 14px 40px;
+            font-size: 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        .search-box:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 66, 122, 0.1);
+        }
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            color: #888;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .counter {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background-color: #002d54; }
+        .table-responsive {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #F8FAFC; }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            background: #E2E8F0;
+        }
+        .badge-auth { background: #DCFCE7; color: #166534; }
+        .badge-danger { background: #FEE2E2; color: #991B1B; }
+        
+        .text-block {
+            white-space: pre-wrap;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .search-container, .actions, .btn { display: none !important; }
+            .container { box-shadow: none; padding: 0; max-width: 100%; }
+            table { font-size: 10px; }
+            th { background-color: #00427A !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            td, th { padding: 6px; border: 1px solid #CBD5E1 !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔍 Manual de Regras de Convênios</h1>
+    
+    <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search" class="search-box" placeholder="Busque por Convênio, Código da Fonte, Regras, Restrições ou Planos...">
+    </div>
+    
+    <div class="actions">
+        <div class="counter" id="counter">Carregando convênios...</div>
+        <button class="btn" onclick="window.print()">📄 Salvar como PDF / Imprimir</button>
+    </div>
+
+    <div class="table-responsive">
+        <table id="conveniosTable">
+            <thead>
+                <tr>
+                    <th style="width: 14%">CONVÊNIO</th>
+                    <th style="width: 8%">FONTE PAG.</th>
+                    <th style="width: 8%">VALIDADE P.M</th>
+                    <th style="width: 15%">REGRAS P.M</th>
+                    <th style="width: 10%">AUTORIZAÇÃO</th>
+                    <th style="width: 23%">PROTOCOLO / OBS</th>
+                    <th style="width: 22%">SITE INOPERANTE / CONTATOS</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const dadosConvenios = [
+    { name: "SAFFEGO", font: "1150", val: "30 DIAS", rules: "SÓ ACEITA (CRM)\nobrigatório CID ou Indicação clinica", auth: "SITE", obs: "- GUIA SHIFT\n- AUTORIZAÇÃO SITE\n- COMPROVANTE DE ATENDIMENTO (SITE)\n\n(O site irá gerar uma autorização SP/SADT mais COMPROVANTE de atendimento)\n- Quando o solicitante (Médico) não for localizado escrever no campo 'NAO'.", contact: "►Não prestar atendimento sem AUTORIZAÇÃO. - Aguardar retorno do site.\n\n► Entrar em contato no Fones: (62) 3218-5435 / 3096-7645 / 3096-7634.\nSuporte nesses casos: centralatendimento@affego.com.br" },
+    { name: "AMIL", font: "9028", val: "90 DIAS", rules: "Só aceita (CRM e CRO)\nAceita pedido cópia/digitalizado\nobrigatório CID / DATA\nNão aceita pedido (CRN). Exceção se revalidado por médico (CRM)", auth: "AUTORIZADOR WS / SITE", obs: "TOKEN (inserir no site e na shift)\n- COMPROVANTE DE ATENDIMENTO (SITE)\n- ELEGIBILIDADE (ANEXAR NA SHIFT)\n- PACIENTE ASSINA O PEDIDO E DATA\n- Renomear: PM + nome paciente e nº da guia (ANEXAR NA SHIFT E NO SITE)", contact: "► A autorização deve ser DO DIA DO ATENDIMENTO. NÃO aceita posterior.\n\n► E casos e WS e site da Amil estiverem inoperante, consulte a elegibilidade e solicite as autorizações por telefone: 3003-2702 / 3004-2206 / 3004-1050 / 0800 706 1663.\n\n✔️ Código do Prestador: 10019600" },
+    { name: "ASSEDF/VIDA CARD FIDELIDADE", font: "5193", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- COMPROVANTE MEDICO HOSPITALAR\n- AUTORIZAÇÃO SITE > DIGITAR CÓDIGOS MANUALMENTE\n- COPIA DOCUMENTO E CARTEIRINHA", contact: "► site da ASSEDF fora do ar acessar o link para autorização:\nhttp://www.cbhpm.com.br/intranet/index2.php?cliente=assedf\nAcesso Restrito\nTipo: Cliente e Fornecedores\nCódigo:100108\nSenha:1234\n\nCaso não consigam entrar em contato para pegar autorização dos exames:\nTelefone: 3326-7453" },
+    { name: "ASSEFAZ", font: "7776", val: "60 DIAS", rules: "CID / DATA\nAceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "Validade da matrícula conforme carteirinha na shift\n- AUTORIZAÇÃO SITE - INSERÇÃO EM LOTE ♥️ (SALVAR NA SHIFT NÃO PRECISA IMPRIMIR)\n- ELEGIBILIDADE\n- PACIENTE ASSINA O PEDIDO E DATA", contact: "Consultar os canais oficiais de comunicação no portal." },
+    { name: "BANCO CENTRAL DO BRASIL", font: "2480", val: "60 DIAS", rules: "Aceita (CRM CRN CRO)\nACEITA PEDIDO MEDICO CÓPIA/DIGITALIZADO ✅", auth: "NÃO TEM", obs: "- GUIA SHIFT\n- ELEGIBILIDADE\n- Solicitar AUTORIZAÇÃO apenas de exames que alertam no sistema da shift via e-mail: autorizacaomedica.pasbc.depes@bcb.gov.br e aguardar o envio da guia por email.", contact: "►SITE INDISPONIVEL\nOrientamos que seja encaminhado ao faturamento, como anexo da Ordem de Serviço, a imagem da tela de erro.\n- Consulta de Elegibilidade pode ser realizada por telefone ou e-mail:\nE-mail: bcsaude.prestador@bcb.gov.br\n• Fones: (61) 3414-4021 / (61) 3414-3900" },
+    { name: "BLUE MED", font: "15484", val: "30 DIAS", rules: "- Aceita SOMENTE CRM\n- NÃO ACEITA CÓPIA", auth: "SITE", obs: "- GUIAS SHIFT\n- AUTORIZAÇÃO SITE\n- ELEGIBILIDADE\nMédico não cadastrado no portal, inserir o código do prestador: 00169", contact: "Caso o site esteja inoperante entrar em contato (Seg a Sex das 07:00 às 17:00):\nTelefone: 0800-366-7777\nE-mail: backoffice@soubluemed.com\n\nFORA DESSE HORÁRIO / FINAIS DE SEMANA:\nexames@soubluemed.com" },
+    { name: "BRADESCO\n- CARTEIRINHA VERMELHA", font: "1795", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "AUTORIZADOR WS", obs: "QUANTIDADE DE EXAMES (contar e colocar na shift) / SOMENTE 1 NUMERO DE GUIA NA SHIFT\n- CAPA BRADESCO\n- PACIENTE ASSINA O PEDIDO\n- Renomear: PM + nome paciente e nº da guia (ANEXAR NA SHIFT E NO SITE)\n*Só atender mediante AUTORIZAÇÃO.", contact: "Devem aguardar o retorno do SITE.\nCódigo do Prestador: 095834.\nO telefone 4004-2700 /0800-7012700 e 4004-4580." },
+    { name: "BRADESCO OP. DE PLANOS\n- CARTEIRINHA PRATA (954/956)", font: "9612", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "AUTORIZADOR WS", obs: "QUANTIDADE DE EXAMES (contar e colocar na shift)\n- CAPA BRADESCO\n- PACIENTE ASSINA O PEDIDO\n- Renomear: PM + nome paciente e nº da guia (ANEXAR NA SHIFT E NO SITE)", contact: "*Só poderemos atender mediante AUTORIZAÇÃO. Aguardar retorno do SITE.\nCódigo do Prestador: 095834.\nTelefones: 4004-2700 /0800-7012700 e 4004-4580." },
+    { name: "BRADESCO SAUDE DF\nSENHA ALFANUMERICA", font: "3527", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- AUTORIZAÇÃO SITE - IMPRIMIR GUIA\n- EXECUTAR NA ORIZON - IMPRIMIR GUIA\n(Todo procedimento que necessita de SENHA ALFA NUMÉRICA, deve ser EXECUTADO no Portal Orizon, no DIA da realização)", contact: "Código do Prestador: 095834.\nTelefones: 4004-2700 /0800-7012700 e 4004-4580." },
+    { name: "BRASILMED", font: "37", val: "NÃO É NECESSÁRIO", rules: "PACIENTE TRAZ O ENCAMINHAMENTO\n- PACIENTE ASSINA O ENCAMINHAMENTO", auth: "GUIA PRÓPRIA", obs: "Paciente traz a guia de encaminhamento e assina.", contact: "Telefone: (61) 3032-9500 (Sra. Josi)." },
+    { name: "BRB SAUDE", font: "7763", val: "30 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- GUIA SHIFT\n- AUTORIZAÇÃO SITE\n- ELEGIBILIDADE\n- PACIENTE ASSINA O PEDIDO\n- CÓPIA DO DOC E CARTEIRINHA\n\n⚠️ SOLICITANTE NÃO LOCALIZADO: Deixar campos de 13 a 19 em branco. O BRB NÃO ACEITA a expressão 'MÉDICO NÃO CADASTRADO'. No campo '13' deve constar o código 00003-1.", contact: "Quando trouxer mais de um pedido médico com solicitante diferente, pegar uma autorização para cada.\nImprimir a GUIA SP/SADT MANUAL se o site estiver fora, colher assinatura e quando retornar, associar." },
+    { name: "BRB SAUDE PERIODICO/ADMISSIONAL", font: "179", val: "--", rules: "PACIENTE TRAZ O ENCAMINHAMENTO\n- PACIENTE ASSINA O ENCAMINHAMENTO - (endereçada ao SABIN)", auth: "--", obs: "ENVIAR GUIA PREENCHIDA PARA O FATURAMENTO:\nCODIGO DO CONVENIADO: 02160\nNOME DO CONVENIADO: BATER O CARIMBO\nVALOR TOTAL: VERIFICAR NA SHIFT\nQUANTIDADE: 01\nDATA: DA REALIZAÇÃO DO EXAME", contact: "Código credenciamento junto ao BRB Saúde (02160).\nTelefones: (61) 3035-9421 / 3035-9422" },
+    { name: "CAESAN", font: "9949", val: "30 DIAS", rules: "- Aceita pedido médico de CRO, COREN e CRN\n- Não aceita pedido médico cópia, apenas se o Pedido for da própria Caesan", auth: "SITE", obs: "- GUIA SHIFT\n- AUTORIZAÇÃO DO SITE\n- ELEGIBILIDADE", contact: "⚠️ NÃO ACEITA AUTORIZAÇÃO com data POSTERIOR." },
+    { name: "CAMARA DOS DEPUTADOS - PRO SAUDE", font: "18164", val: "30 DIAS", rules: "Aceita (CRM)\nAceita cópia de pedido LEGÍVEL ✅", auth: "AUTORIZADOR WS/ SITE", obs: "⚠️ ATENÇÃO EXAMES: INFLUAB / SARSCOV2 / INFLUPC / RSVPCR / CLAPCRD / CITOML / BCRABLQT / HPVGENO /CLAPCR\nSolicitar autorização sempre MANUAL direto no portal (WS não gera a senha).\n- Inserir a SENHA na shift e anexar na O.S\n- Não aceita Assinatura em ANEXO.", contact: "WS INOPERANTE Portal:\nhttps://autorizadorcamara.bennercloud.com.br/autorizador/custom/CustomLogin.aspx\nLogin: 00718528000109 | Senha: Nibas@2024\n► Esta fonte pagadora não aceita autorização posterior.\nSITE INOPERANTE: ligar para 0800-729-2326 (24h)" },
+    { name: "CAPESAUDE", font: "38", val: "30 DIAS", rules: "Aceita (CRM e CRO)\nACEITA PEDIDO CÓPIA DIGITALIZADO ✅", auth: "NÃO TEM (WS)", obs: "Os exames com ALERTAS são necessários solicitar AUTORIZAÇÃO\n- Ordem de Escritório\n- AUTORIZAÇÃO SITE (SOMENTE OS QUE ALERTAREM)\n- ELEGIBILIDADE\n- GUIA SHIFT", contact: "Site Inoperante/ Senhas de Autorização:\nZAP- (21) 97625-6980\nE-mail: suportecontasmedicas@capesesp.com.br" },
+    { name: "CARE PLUS", font: "89", val: "30 DIAS", rules: "CID obrigatório\nAceita (CRM, CRO e CRN)\nnão aceita cópia de pedido", auth: "ORIZON / SITE", obs: "Autorização Somente para os exames que alertarem na SHIFT / AUTORIZAÇÃO VIA ORIZON. Caso não autorize na Orizon, solicitar pelo site da Careplus\n- CÓPIA DO CARTÃO DE IDENTIFICAÇÃO", contact: "Telefone: (11) 4197-9000\nCentral: 0800 407 9000\nCódigo Prestador: 460371" },
+    { name: "CASEMBRAPA", font: "1254", val: "360 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "AUTORIZADOR WS", obs: "- ELEGIBILIDADE\n- PACIENTE ASSINA O PEDIDO\n- Solicitar AUTORIZAÇÃO apenas de exames que alertam via e-mail: autorizacaomedica.pasbc.depes@bcb.gov.br", contact: "CASEMBRAPA ESPECIAIS PASSO A PASSO:\nWEB SAUDE > SOLICITAÇÕES > SOLICITAÇÕES DE SP-SADT > NOVA SOLICITAÇÃO > PREENCHER > ANEXAR ARQUIVOS (Clica no + , nos 3 pontinhos, download e anexa)" },
+    { name: "CASSI / CASSI VIDA", font: "2709 / 18094", val: "90 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "AUTORIZADOR WS", obs: "- PACIENTE ASSINA O PEDIDO\n⚠️ WEB SERVICE INOPERANTE: as autorizações devem ser solicitadas diretamente no site da Orizon. Preencher os campos 'Senha/Autorização' e 'Guia Prestador' na Shift com o número gerado.\nORIZON INOPERANTE: Ligue na Cassi.", contact: "Central Cassi: 4004-4550 ou 0800-729-0090\nCódigo do Prestador Sabin: 157724\n💢 NÃO ACEITA AUTORIZAÇÃO POSTERIOR.\nCHAT ONLINE: https://servicosonline.cassi.com.br/GASC/v2/Prestador\nLogin: CPF completo | Senha: seu e-mail sem @sabin.com.br + 3 primeiros dígitos do CPF" },
+    { name: "CEAM BRASIL", font: "1879", val: "30 DIAS", rules: "A partir do dia 08/10/2024, estará SUSPENSO!!!", auth: "--", obs: "Atendimento suspenso conforme comunicado.", contact: "--" },
+    { name: "CIGNA", font: "3309", val: "--", rules: "Não tem regras fixas de conselho. Verificar porcentagem de pagamento na elegibilidade.\nPaciente assina pedido médico.", auth: "NÃO TEM", obs: "Anexar no atendimento os seguintes documentos:\n🔹Orçamento; Elegibilidade; Pedido médico; Identidade; Carteirinha (frente e verso); Carta de Garantia (se aplicável).\nO número da carteirinha corresponde ao campo 'Pers. ref. nº'", contact: "📧 CONTATO VIA E-MAIL:\nDúvidas: authorization@cigna.com\nOutras perguntas: providernetwork@CignaHealthcare.com\nReivindicações: providerquestions2@CignaHealthcare.com" },
+    { name: "CNU UNIMED\n- DEMAIS MATRICULAS / 865/067/229", font: "12740 / 12739", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA. Obrigatório CID ou Indicação Clínica.", auth: "WS / SITE", obs: "- AUTORIZAÇÃO WS ou SITE\n- IMPRIMIR GUIA NO SITE\nSite: http://saw.trixti.com.br/saw/Logar.do?method=abrirSAW\nCódigo Prestador: 002305275\nInformar o número gerado na Shift no campo 2 do SAW para evitar duplicidade.", contact: "⚠️ SITE INOPERANTE (Matrícula 865 / Fonte 12739): Preencher guia manual Unimed, assinada pelo paciente. Ligar no (11) 2505-1111 p/ ver elegibilidade. Quando o site voltar, lançar.\nImportante: Demais Unimeds Intercâmbio SÓ ATENDER após o site retornar.\nSolicitações extracontratuais devem ser feitas pelo beneficiário na Unimed de origem." },
+    { name: "CODEVASF (casec)", font: "42", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nACEITA COPIA DO PEDIDO ✅", auth: "SISTEMA", obs: "Solicite autorizações para procedimentos COM ALERTA NO SISTEMA.\n- Ordem de Escritório | Elegibilidade\n- PACIENTE ASSINA O PEDIDO (Matrícula e data obrigatórios)\nSalvar na O.S: Pedido Médico (PM nome) e Autorização (AUT nome).", contact: "📞 CENTRAL DE AUTORIZAÇÕES: (85) 3034-8888 / 0800 707 4772\nWhatsApp: (85) 99744-0780" },
+    { name: "CONAB", font: "43", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA COPIA", auth: "SISTEMA", obs: "- ELEGIBILIDADE\n- GUIA SHIFT", contact: "Contatos padrão via sistema." },
+    { name: "CORPO DE BOMBEIROS (TITULAR / DEPENDENTE)", font: "1622 / 1952", val: "60 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "GUIA DE ENCAMINHAMENTO (Paciente traz e assina).\nEscanear na ordem em 1 único PDF:\n- COMP MEDICO HOSPITALAR + GUIA CBMDF + PEDIDO MEDICO + COPIA DOC FRENTE/VERSO (Colorido para titular).\nGuia Token deve ser validada na hora.", contact: "O site continua o mesmo, porém com duas opções:\n- ATENDIMENTO (pra quem veio com a guia)\n- ATENDIMENTO TOKEN (pra quem veio com a guia token)\nNÃO É MAIS NECESSÁRIO ANEXAR NA ORDEM." },
+    { name: "E VIDA / ELETRONORTE / LUMINAR", font: "50", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAcerita cópia de pedido ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- ELEGIBILIDADE\n- COMPROVANTE MEDICO HOSPITALAR\nSe tiver dois ou mais pedidos médicos, solicitará apenas uma autorização. Médico solicitante não é obrigatório.", contact: "Canais do portal e-Vida." },
+    { name: "EVO SAUDE", font: "2125", val: "1 FASCAL", rules: "--", auth: "--", obs: "--", contact: "--" },
+    { name: "FASCAL - CLDF SAUDE", font: "56", val: "60 DIAS", rules: "CID Obrigatório\nAceita CRM, CRO, COREN e CRN\nAceita cópia de pedido médico datado ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- COMPROVANTE MEDICO HOSPITALAR (OBRIGATORIO)", contact: "Suporte do portal FASCAL." },
+    { name: "FUSEX", font: "63", val: "Sem Validade", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "GUIA PRÓPRIA", obs: "- GUIA DE ENCAMINHAMENTO\n- PACIENTE ASSINA O PEDIDO\nUtilize a matrícula do Encaminhamento localizada no campo 'PREC CP' ao lado do nome do beneficiário.", contact: "Sistemas do Exército / Fusex." },
+    { name: "GAMA SAUDE", font: "67", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- ELEGIBILIDADE\n- AUTORIZAÇÃO SITE", contact: "Portal Gama Saúde." },
+    { name: "GEAP (PADRÃO / EXAMES ESPECIAIS / CITO-COVID)", font: "12738 / 6488 / 1326", val: "90 DIAS", rules: "CID Obrigatório. Apenas CRM ou CRO – Pedidos de CRN NÃO serão aceitos.\nNÃO ACEITA CÓPIA DO PEDIDO.", auth: "WS / SITE", obs: "- AUTORIZAÇÃO SITE (SOMENTE OS QUE ALERTAREM)\n- ELEGIBILIDADE\n- GUIA SHIFT\nPara exames especiais e Cito/Covid, anexar Cópia do Doc e Carteirinha.", contact: "⚠️ SITE INOPERANTE (CI N° 106/2024): NÃO SERÁ MAIS PERMITIDO O USO DE GUIA MANUAL PARA SITE INOPERANTE. Atendimentos somente com autorização/senha do convênio." },
+    { name: "GOLDEN CROSS (MANUAL)", font: "2135", val: "90 DIAS", rules: "--", auth: "SITE", obs: "Fluxo de autorização manual via site.", contact: "Portal Golden Cross." },
+    { name: "HOSPITAL NAVAL / FUSMA", font: "77", val: "30 DIAS", rules: "ACEITA CÓPIA DO PEDIDO ✅\nValidade da guia e do pedido: 30 dias. Se estiver com a autorização, mesmo com pedido vencido, pode aceitar.", auth: "PACIENTE TRAZ", obs: "- O paciente traz guia autorizada + (Pedido Médico cópia ou original)\n- É obrigatória a assinatura do paciente na guia autorizada\n- Cadastrar somente os exames autorizados na guia.", contact: "Serviço de Saúde da Marinha." },
+    { name: "INAS", font: "1252", val: "460 DIAS", rules: "Só aceita (CRM)\nACEITA CÓPIA DO PEDIDO ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE - especialidade da guia: PATOLOGIA CLINICA\n- CAPTURAR GUIA APOS AUTORIZAÇÃO\n- COPIA DO DOC E CARTEIRINHA", contact: "Solicite com o código 6777 ('Responsável não atualizado')." },
+    { name: "INTERMEDICA", font: "2145", val: "60 DIAS", rules: "Aceita pedidos de médicos (CRM e RMS)", auth: "SITE", obs: "- SITE\n- ELEGIBILIDADE\n- TOKEN", contact: "Grupo NotreDame Intermédica." },
+    { name: "IPASGO", font: "20230", val: "--", rules: "Não há regras específicas, desde que todos os exames estejam autorizados no sistema.", auth: "SITE", obs: "⚠️ COMUNICAÇÃO INTERNA N° 015/2025: Todas as guias deverão ser encaminhadas para o faturamento SAAN.\n1. Autorização SP/SADT assinada pelo beneficiário.\n2. Encaminhamento assinado pelo beneficiário.\n3. Pedido médico (quando houver).\nCONFERIR SE OS CÓDIGOS BATEM COM A AUTORIZAÇÃO.", contact: "Portal IPASGO." },
+    { name: "IPASVAL", font: "1586", val: "60 DIAS", rules: "- Aceita CRM, CRN e COREM. Não aceita cópia.\n- Não aceita rasura. Só aceita inclusão a caneta se o médico carimbar e assinar abaixo.\n- Obrigatório ter CID no pedido.", auth: "SITE", obs: "Usuário: sabinipasval | Senha: Sabin123\nMenu principal > saude > prestador > emissão de guias (recepcionistas).\nGuia tipo 2 (exames). Se a carência ficar VERMELHA, o beneficiário deve ligar no convênio. Se VERDE, apto. Salvar, adicionar pedido, enviar e autorizar.", contact: "Pesquisar guia na lupinha em emissão de guia." },
+    { name: "JUSTICA FEDERAL DO DF", font: "1224", val: "90 DIAS", rules: "Aceita CRM (CRN e CRO verificar na shift).\nAceita cópia de pedido DIGITALIZADO ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- ELEGIBILIDADE", contact: "Portal da Justiça Federal." },
+    { name: "LIFE EMPRESARIAL", font: "525", val: "30 DIAS", rules: "Só aceita CRM.\nAceita cópia ✅", auth: "PACIENTE TRAZ", obs: "- GUIA PORTAL / GUIA SHIFT\nANEXAR NA SHIFT: Documento Paciente (Frente/Verso), Carteirinha, Elegibilidade, Autorização assinada e Pedido Médico Original.", contact: "Canais da Life Empresarial." },
+    { name: "MEDISERVICE", font: "74", val: "30 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- GUIA SHIFT", contact: "Central Mediservice." },
+    { name: "MEDSENIOR", font: "1157", val: "INDET.", rules: "Só aceita (CRM e CRO)", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- COMPROVANTE MEDICO HOSPITALAR", contact: "Portal MedSênior." },
+    { name: "NOTRE DAME", font: "55", val: "760 DIAS", rules: "Só aceita (CRM e RMS).\nNão aceita cópia (Exceto da TELEMEDICINA)", auth: "SITE", obs: "- SITE | ELEGIBILIDADE | TOKEN\n⚠️ MÉDICO NÃO ENCONTRADO: Quando não encontrar, coloque CÓDIGO 14098.", contact: "Suporte NotreDame." },
+    { name: "NOVA SAUDE", font: "2144", val: "960 DIAS", rules: "ACEITA CRM, CRN e CRO. ACEITA CÓPIA LEGÍVEL (FOTOCÓPIA NÃO)", auth: "SITE", obs: "Guia Shift e trâmites de portal.", contact: "Portal Nova Saúde." },
+    { name: "OMINT SAUDE", font: "132", val: "90 DIAS", rules: "CID obrigatório.\nAceita (CRM) (CRO - somente para os casos cirúrgicos).\nACEITA COPIA DO PEDIDO DIGITALIZADO ✅", auth: "NÃO TEM", obs: "- ELEGIBILIDADE\n- GUIA SHIFT", contact: "Canais Omint." },
+    { name: "PASA VALE", font: "7691", val: "30 DIAS", rules: "Aceita CRM, CRN, CRO e RMS.\nACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- ELEGIBILIDADE", contact: "Portal PASA." },
+    { name: "PETROBRAS PETROLEO", font: "83", val: "180 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "SISTEMA", obs: "Solicitar autorização apenas para os exames que alertarem no sistema.\n- ELEGIBILIDADE | GUIA SHIFT\n- PACIENTE ASSINA O PEDIDO", contact: "Canais de Relacionamento Petrobras." },
+    { name: "PF SAUDE - POLICIA FEDERAL", font: "1744", val: "830 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- COPIA DO DOC e carteirinha\n- COMPROVANTE MEDICO HOSPITALAR\n⚠️ CAMPO GUIA OPERADORA OBRIGATÓRIO: Inserir a senha menos os três últimos números.", contact: "Diretoria de Saúde da PF." },
+    { name: "PLANASSISTE - MPU", font: "1715", val: "INDET.", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "WS / SITE", obs: "- AUTORIZAÇÃO SITE (SÓ EXAMES QUE ALERTAREM NA SHIFT)\n- COMPROVANTE MEDICO HOSPITALAR\n- PACIENTE ASSINA O PEDIDO", contact: "MPU Planassiste." },
+    { name: "PLENUM SAUDE", font: "2171", val: "360 dias", rules: "NÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "► Guia TISS assinada.\n► Guia de autorização.\n► Elegibilidade – salvar na shift e imprimir.\n► Pedido médico válido.\n► Carteirinha salvar e imprimir.", contact: "Suporte Plenum." },
+    { name: "POLICIA MILITAR (TITULAR / DEPENDENTE)", font: "2166 / 2172", val: "INDET.", rules: "Aceita (CRM, COREN, NUTRICIONISTA, CRO, BUCO MAXILO, MÉDICO CUBANO-RMS, ENFERMEIRO).\nNÃO ACEITA CÓPIA.", auth: "WS / SITE", obs: "- AUTORIZAÇÃO NO SITE\n- COMPROVANTE POLICIA MILITAR / elegibilidade", contact: "Centro de Saúde da PM." },
+    { name: "PORTO SEGURO", font: "211", val: "INDET.", rules: "Aceita (CRM e CRO)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SISTEMA", obs: "Solicitar autorização apenas para os exames que alertarem na SHIFT.\n- ELEGIBILIDADE | AUTORIZAÇÃO SITE | GUIA SHIFT", contact: "Porto Seguro Saúde." },
+    { name: "POSTAL SAUDE CORREIOS", font: "245", val: "130 DIAS", rules: "Só aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- ELEGIBILIDADE\n- AUTORIZAÇÃO SITE\n- GUIA SHIFT / PACIENTE ASSINA PEDIDO", contact: "Postal Saúde." },
+    { name: "PREVENT SENIOR", font: "1297", val: "460 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SITE", obs: "- ANEXAR PEDIDO MEDICO COM DATA - SCANEAR (Renomear: PM + nome)\n⚠️ ATENÇÃO: NÃO INCLUIR PEDIDO SEM DATA, SERÁ GLOSADO.\n- PACIENTE ASSINA O PEDIDO.\nNo site: 1° Solicitar Procedimentos > 2° Emissão de Guia. Nº Senha: Repita o mesmo nº da guia operadora/SHIFT.\nSe o médico não tiver cadastro, cadastrar na hora.", contact: "Portal Prevent Senior." },
+    { name: "PROASA", font: "8917", val: "90 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- GUIA SHIFT\n- PACIENTE ASSINA O PEDIDO / GUIA: GUIA NO PRESTADOR", contact: "Suporte Proasa." },
+    { name: "QUALLITY", font: "9211", val: "60 DIAS", rules: "Aceita (CRM)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "✔ Autorização do site assinada pelo beneficiário.\n✔ Cópia do documento do beneficiário (FRENTE E VERSO - LEGÍVEL). Cópia da carteirinha não é obrigatória.\n✔ Pedido médico ORIGINAL.\n⚠️ DOCUMENTOS DEVEM VIR IMPRESSOS AO FATURAMENTO e anexados na O.S.", contact: "Quality Saúde." },
+    { name: "REDE TOTAL / ADM SAUDE", font: "21179", val: "30 DIAS", rules: "--", auth: "SITE", obs: "► Guia TISS assinada.\n► Guia de autorização.\n► Pedido médico válido.", contact: "Portal Rede Total." },
+    { name: "SALUTA", font: "8350", val: "--", rules: "-(PACIENTE ou RESPONSÁVEL DEVE ASSINAR DE ACORDO COM DOCUMENTO ANEXADO)\nPegar autorização para o ANTIBIOGRAMA no site separadamente.", auth: "SITE", obs: "- Paciente assina APENAS a ORDEM DE SERVIÇO emitida pelo SITE da SALUTA CARD\n- COPIA DO DOCUMENTO (frente e verso)\n⚠️ VERIFICAR VALORES: Após incluir os exames no site, verifique se os valores da SHIFT batem. Se divergentes, CANCELAR e procurar outro procedimento com o valor correto.", contact: "Saluta Card." },
+    { name: "SAUDE CAIXA (01/03/11 e 05/51)", font: "21179", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita pedido cópia/digitalizado. ✅", auth: "NÃO TEM", obs: "Solicitar autorização somente para os exames que alertarem no sistema.\n- ELEGIBILIDADE | GUIA SHIFT | COPIA DA CARTEIRINHA E DOC\nValidade da matrícula conforme carteirinha.", contact: "Saúde Caixa Federal." },
+    { name: "SAUDE CAIXA PROGRAMA SAUDE PREVENTIVA", font: "21361", val: "90 DIAS", rules: "💢 NÃO exigir pedido médico ao empregado (a guia emitida pela CAIXA já é assinada pelo médico do programa).\n💢 NÃO solicitar a carteirinha no ato. A MATRÍCULA CADASTRADA deve ser a da GUIA APRESENTADA.", auth: "PRÉVIA CAIXA", obs: "💢 OBRIGATÓRIA assinatura do paciente no encaminhamento. Bater o carimbo do Sabin e colher assinatura.\n💢 NÃO solicitar autorização prévia, eventos já pré-autorizados pela CAIXA.\n⚠️ Impedido de realizar exames com guias fora da validade de 90 dias.", contact: "GTI Caixa Executiva." },
+    { name: "SELECT", font: "2100", val: "30 DIAS", rules: "ACEITA CRM e CRN – NÃO ACEITA CRO\nPedido médico ORIGINAL.", auth: "SITE", obs: "➡ Ordem de escritório;\n➡ Guias de autorizações assinadas pelo Beneficiário;\n⚠️ MÉDICO NÃO ENCONTRADO: habilitar a opção 'MÉDICO SOLICITANTE NÃO CADASTRADO'.", contact: "⚠️ SITE INOPERANTE: Deixe impresso o modelo SADT manual. Ligue no SAC: 0800 224 2808 informando o código do paciente e códigos dos exames para emitir guias e gerar senha." },
+    { name: "SERPRO", font: "1324", val: "60 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SITE", obs: "- ELEGIBILIDADE | AUTORIZAÇÃO NO SITE\n🔴 A MATRÍCULA NA SHIFT DEVE SER O NÚMERO QUE CONSTA NA ELEGIBILIDADE!!!!\nCaso o médico não seja encontrado, preencher: SOLICITANTE NÃO CADASTRADO.", contact: "Portal Serpro." },
+    { name: "SIASS", font: "2072", val: "Guia SIASS", rules: "Verificar prazo contido na guia do SIASS.\n* NÃO ANEXAR CONSULTAS, SÓ EXAMES LABORATORIAIS *", auth: "TRAZ A GUIA", obs: "⚠️ OBS CADASTRO: NÃO CADASTRAR COLESTEROL TOTAL E TRIGLICERIDIOS SEPARADO. LANÇAR (CTFRTRI).\nCaso traga encaminhamento de consulta, DEVOLVER.\nNa SHIFT: colocar o nº da chave no campo Guia Operadora (Ex: 7B04.DB5E.B279.50D6.57B5.9891). Se forem chaves diferentes, incluir todas.", contact: "Subsistema Integrado de Atenção à Saúde do Servidor." },
+    { name: "SIS SENADO", font: "1054", val: "130 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "NÃO TEM", obs: "Solicitar autorização somente para os exames que alertarem no sistema.\n- GUIA SHIFT | COPIA DO DOC E CARTEIRINHA\n- ASSINATURA IGUAL O DOCUMENTO", contact: "SIS Senado Federal." },
+    { name: "STF-MED", font: "1079", val: "60 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SISTEMA", obs: "Solicitar autorização SOMENTE para os exames que ALERTAREM na SHIFT.\n- ELEGIBILIDADE | GUIA SHIFT | COPIA DA CARTEIRINHA E DOC - ANEXAR O.S\n(Se tiver autorização, esta também deve ser assinada pelo beneficiário).", contact: "Supremo Tribunal Federal." },
+    { name: "STJ", font: "5199", val: "--", rules: "Aceita (CRM, CRO e CRN)", auth: "SITE", obs: "- AUTORIZAÇÃO SITE | ELEGIBILIDADE | COMPROVANTE MEDICO HOSPITALAR\n- PACIENTE ASSINA O PEDIDO\n⚠️ OBS CADASTRO: QUANDO SOLICITAR PERFIL LIPIDOGRAMA - CADASTRAR: CTFRTRI", contact: "Superior Tribunal de Justiça." },
+    { name: "STM - PLAS/JMU", font: "152", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido DIGITALIZADO ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- ASSINATURA IGUAL O DOCUMENTO\n- CÓPIA DA CARTEIRINHA E DOC NA O.S\n⚠️ AUTORIZAÇÃO SEPARADA POR MÉDICO.\n⚠️ MÉDICO NÃO LOCALIZADO: digite '01220-0' (No campo 15) ou digite 'PROFISSIONAL GERAL'.", contact: "Superior Tribunal Militar." },
+    { name: "TJDF PERIÓDICO", font: "2071", val: "130 DIAS", rules: "Encaminhamento Obrigatório do Periódico do TJDF.\nCID Obrigatório. Aceita CRM, CRO e CRN. NÃO ACEITA CÓPIA DO PEDIDO.", auth: "SITE", obs: "Autorizações 100% pelo site Portal BENNER CONECTA.\n📌 Obrigatório preenchimento de MATRÍCULA E SENHA na Shift.\n- COMPROVANTE MEDICO HOSPITALAR e Pedido Médico.\n⚠️ MATRÍCULA: Passou a ser todos os dígitos da carteirinha (8 a 14 caracteres).\n⚠️ Marcar no campo 'Titular do Convênio' se ele é ou não o titular.\n⚠️ Exames devem estar 100% autorizados em Guia SADT (Não aceita 'em análise' ou 'envio pendente'). Grampear do lado ESQUERDO do papel A4.", contact: "🚫 NÃO ACEITA AUTORIZAÇÃO COM DATA POSTERIOR nem assinatura em anexo.\n⚠️ SITE COM INSTABILIDADE / INOPERANTE: Atender com a Guia Manual (o campo data NÃO pode conter rasura). Tire PRINT da tela com data/horário do erro e anexe na O.S. Quando o sistema voltar, realizar todo o processo no portal." },
+    { name: "TRE", font: "16", val: "30 DIAS", rules: "Aceita (CRM, CRO)", auth: "SISTEMA", obs: "Fluxo regular de validação do tribunal.", contact: "Tribunal Regional Eleitoral." },
+    { name: "TRF (PRO SOCIAL)", font: "1021", val: "90 DIAS", rules: "NÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- GUIA SHIFT / ELEGIBILIDADE\n- PACIENTE ASSINA O PEDIDO", contact: "⚠️ TRF não aceita autorização posterior e não aceita assinatura em anexo." },
+    { name: "TRT 10 REGIAO\n(TITULAR / DEPEND. AUTORIZADOS / PENSIONISTA / PRESUMIDOS)", font: "2114 / 2479", val: "90 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA FOTOCÓPIA DO PEDIDO", auth: "SITE", obs: "- OBRIGATÓRIO PEDIDO MÉDICO COM ASSINATURA DO PACIENTE\n- PACIENTE ASSINA O PEDIDO MÉDICO DATADO E COM CID\n- ORDEM DE ESCRITÓRIO LIMPA\n- ELEGIBILIDADE ANEXADA NA O.S", contact: "Tribunal Regional do Trabalho 10ª Região." },
+    { name: "TST", font: "79", val: "30 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- ELEGIBILIDADE\n- AUTORIZAÇÃO SITE / - GUIA SHIFT", contact: "Tribunal Superior do Trabalho." },
+    { name: "UNAFISCO", font: "18", val: "INDET.", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SITE", obs: "- AUTORIZAÇÃO SITE\n- GUIA SHIFT", contact: "Unafisco Saúde." },
+    { name: "UNIMED SEGUROS", font: "2169", val: "INDET.", rules: "Só aceita (CRM e CRO). NÃO ACEITA CÓPIA.\nCID IGUAL O PEDIDO NA SHIFT.", auth: "SITE", obs: "- ELEGIBILIDADE\n- AUTORIZAÇÃO SITE - SALVAR NA O.S (Não precisa imprimir nem assinar a autorização, só salvar na Shift).\n- PACIENTE ASSINA APENAS O PEDIDO\n- SCANEAR PEDIDO (Renomear: PM + nome paciente)\n⚠️ ATENÇÃO: Verificar na autorização se a quantidade autorizada está conforme a solicitação (BIOPSIA PRINCIPALMENTE).", contact: "Seguros Unimed." },
+    { name: "UNITY SAUDE", font: "1869", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "SITE", obs: "- AUTORIZAÇÃO NO SITE (CÓDIGO DA OPERADORA: 00044-2)\n- GUIA SHIFT | COMPROVANTE MEDICO HOSPITALAR | CÓPIA DO DOC E CARTEIRINHA\n- DATA DO PEDIDO MEDICO NA SHIFT (Assinatura idêntica ao documento)\n⚠️ RUMO À GLOSA ZERO (Campos 13 a 19):\nCampo 13: Usar o código correto 00044-2.\nCampo 14: Nome do laboratório (Não deixar em branco).\nCampos 15 a 19 (Dados do Solicitante): Se não houver dados, preencher como MÉDICO ANÔNIMO. Se algum dado estiver em branco/incorreto, preencher o campo 58 da autorização de forma legível.", contact: "⚠️ ERRO 0688 NO CADASTRO DO PRESTADOR: Significa que o produto foi descredenciado." },
+    { name: "UNIVIDAS SAUDE", font: "2016", val: "60 DIAS", rules: "Aceita pedido médico de CRO e COREN (COREN depende do exame).\nNÃO ACEITA CÓPIA.", auth: "SITE", obs: "- CID no pedido médico\n- AUTORIZAÇÃO NO SITE\n- GUIA SHIFT\n- CÓPIA DO DOC E CARTEIRINHA\n- TOKEN (Confirmar atendimento no site - o token e a senha são o mesmo número).\nAssinatura idêntica ao documento.", contact: "⚠️ OBRIGATÓRIO TOKEN: Se o paciente não apresentar o token, o atendimento NÃO será possível.\nCaso o app de senhas não funcione, orientar o paciente a ligar no convênio para liberação interna:\nTelefone: 3003-0323 | WhatsApp: (11) 95288-2000" }
+];
+
+function renderTable(data) {
+    const tbody = document.querySelector("#conveniosTable tbody");
+    if(data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#888; font-size:16px;">Nenhum convênio encontrado.</td></tr>`;
+        document.getElementById("counter").innerText = "0 convênios encontrados";
+        return;
+    }
+    
+    tbody.innerHTML = data.map(item => {
+        let authBadge = item.auth.includes("NÃO") ? "badge-danger" : "badge-auth";
+        return `
+        <tr>
+            <td><strong>${item.name.replace(/\n/g, '<br>')}</strong></td>
+            <td><span class="badge">${item.font}</span></td>
+            <td>${item.val}</td>
+            <td><div class="text-block">${item.rules}</div></td>
+            <td><span class="badge ${authBadge}">${item.auth}</span></td>
+            <td><div class="text-block">${item.obs}</div></td>
+            <td><div class="text-block">${item.contact}</div></td>
+        </tr>
+    `}).join('');
+    
+    document.getElementById("counter").innerText = `${data.length} convênio(s) listado(s)`;
+}
+
+document.getElementById("search").addEventListener("input", (e) => {
+    const text = e.target.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const filtered = dadosConvenios.filter(item => {
+        const nameClean = item.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const fontClean = item.font.toLowerCase();
+        const rulesClean = item.rules.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const obsClean = item.obs.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        return nameClean.includes(text) || fontClean.includes(text) || rulesClean.includes(text) || obsClean.includes(text);
+    });
+    renderTable(filtered);
+});
+
+renderTable(dadosConvenios);
+</script>
+
+</body>
+</html>
