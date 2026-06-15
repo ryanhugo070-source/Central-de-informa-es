@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -204,13 +205,12 @@
 <div class="container">
     <h1>📋 Central de Informações</h1>
     
-    <!-- Menu de Abas -->
     <div class="tabs-container">
         <button class="tab-btn active" onclick="switchTab('convenios')">🔍 Regras de Convênios</button>
         <button class="tab-btn" onclick="switchTab('vacinas')">💉 Vacinas</button>
+        <button class="tab-btn" onclick="switchTab('glosas')">⚠️ Motivos de Glosa</button>
     </div>
     
-    <!-- ABA 1: CONVÊNIOS -->
     <div id="convenios" class="tab-content active">
         <div class="search-container">
             <span class="search-icon">🔍</span>
@@ -241,9 +241,7 @@
         </div>
     </div>
 
-    <!-- ABA 2: VACINAS -->
     <div id="vacinas" class="tab-content">
-        <!-- Linha informativa superior fixa -->
         <div class="info-header-box">
             <div class="info-header-item"><span>📅 Validade Pedido Médico</span><span><b>30 Dias</b></span></div>
             <div class="info-header-item"><span>🏢 Unidade Metrópole</span><span>Posto: <b>403</b> / Fonte: <b>PARTICULAR - 2754</b></span></div>
@@ -437,10 +435,75 @@
             </table>
         </div>
     </div>
+
+    <div id="glosas" class="tab-content">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchGlosas" class="search-box" placeholder="Busque por Convênio ou Regra de Glosa..." onkeyup="filtrarGlosas()">
+        </div>
+
+        <div class="actions">
+            <div class="counter" id="counterGlosas">Carregando motivos...</div>
+            <button class="btn" onclick="window.print()">📄 Salvar como PDF / Imprimir</button>
+        </div>
+
+        <div class="table-responsive">
+            <table id="glosasTable">
+                <thead>
+                    <tr>
+                        <th style="width: 25%">CONVÊNIO</th>
+                        <th style="width: 75%">PRINCIPAIS MOTIVOS DE GLOSA / ALERTAS CRÍTICOS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>UNAFISCO VACINAS</b></td>
+                        <td><div class="text-block">⚠️ Glosa se a <b>Guia Manual não estiver devidamente ASSINADA</b> pelo paciente.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>PF SAUDE</b></td>
+                        <td><div class="text-block">⚠️ OBRIGATÓRIO anexar <b>Comprovante Médico Hospitalar</b> e o <b>Pedido Médico devidamente assinado</b>.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>QUALLITY</b></td>
+                        <td><div class="text-block">⚠️ Obrigatório anexar <b>Cópia do Documento de Identificação</b> do paciente.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>BRADESCO</b></td>
+                        <td><div class="text-block">⚠️ Obrigatório realizar o <b>anexo do Pedido Médico (PM) e Guia (GU)</b>, bem como realizar a devida <b>execução no Portal Orizon</b>.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>INAS</b></td>
+                        <td><div class="text-block">⚠️ Obrigatório anexar <b>Cópia do Documento de Identificação</b> do paciente.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>SIS SENADO</b></td>
+                        <td><div class="text-block">⚠️ Obrigatório anexar <b>Cópia do Documento de Identificação</b> do paciente.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>STJ / TJDF / BRB</b></td>
+                        <td><div class="text-block">⚠️ ATENTAR AO PEDIDO MÉDICO: Verificar rigorosamente se ele trata de um <b>Pedido Periódico</b>.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>GEAP VACINAS</b></td>
+                        <td><div class="text-block">⚠️ <b>CONFERIR ITENS OBRIGATÓRIOS PARA EVITAR GLOSA:</b><br>1. Validade do Pedido Médico.<br>2. Cópia do Cartão de Vacinas.<br>3. <span class="badge badge-danger">Campos obrigatórios a serem preenchidos na Guia Manual:</span> <b>25, 26</b> (especificar a dose), <b>36, 40, 41</b> (especificar a dose), <b>42, 46, 47 e 65</b>.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>PREVENT SENIOR</b></td>
+                        <td><div class="text-block">⚠️ OBRIGATÓRIO que o <b>Pedido Médico esteja devidamente DATADO</b>. Pedidos sem data geram glosa imediata.</div></td>
+                    </tr>
+                    <tr>
+                        <td><b>CÂMARA DOS DEPUTADOS</b></td>
+                        <td><div class="text-block">⚠️ <span class="badge badge-danger">Gera Glosa se feito por WS:</span> Para os exames <b>INFLUAB, SARSCOV2, INFLUPCR, RSVPCR, CLAPCRD, CITOML, BCRABLQT, HPVGENO e CLAPCR</b>, é estritamente <b>NECESSÁRIO GERAR A AUTORIZAÇÃO MANUAL</b> direto no portal.</div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>
-// Lista de Dados de Convênios
+// Lista de Dados de Convênios (Aba 1)
 const dadosConvenios = [
     { name: "SAFFEGO", font: "1150", val: "30 DIAS", rules: "SÓ ACEITA (CRM)\nobrigatório CID ou Indicação clinica", auth: "SITE", obs: "- GUIA SHIFT\n- AUTORIZAÇÃO SITE\n- COMPROVANTE DE ATENDIMENTO (SITE)\n\n(O site irá gerar uma autorização SP/SADT mais COMPROVANTE de atendimento)\n- Quando o solicitante (Médico) não for localizado escrever no campo 'NAO'.", contact: "►Não prestar atendimento sem AUTORIZAÇÃO. - Aguardar retorno do site.\n\n► Entrar em contato no Fones: (62) 3218-5435 / 3096-7645 / 3096-7634.\nSuporte nesses casos: centralatendimento@affego.com.br" },
     { name: "AMIL", font: "9028", val: "90 DIAS", rules: "Só aceita (CRM e CRO)\nAceita pedido cópia/digitalizado\nobrigatório CID / DATA\nNão aceita pedido (CRN). Exceção se revalidado por médico (CRM)", auth: "AUTORIZADOR WS / SITE", obs: "TOKEN (inserir no site e na shift)\n- COMPROVANTE DE ATENDIMENTO (SITE)\n- ELEGIBILIDADE (ANEXAR NA SHIFT)\n- PACIENTE ASSINA O PEDIDO E DATA\n- Renomear: PM + nome paciente e nº da guia (ANEXAR NA SHIFT E NO SITE)", contact: "► A autorização deve ser DO DIA DO ATENDIMENTO. NÃO aceita posterior.\n\n► E casos e WS e site da Amil estiverem inoperante, consulte a elegibilidade e solicite as autorizações por telefone: 3003-2702 / 3004-2206 / 3004-1050 / 0800 706 1663.\n\n✔️ Código do Prestador: 10019600" },
@@ -461,7 +524,7 @@ const dadosConvenios = [
     { name: "CASEMBRAPA", font: "1254", val: "360 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "AUTORIZADOR WS", obs: "- ELEGIBILIDADE\n- PACIENTE ASSINA O PEDIDO\n- Solicitar AUTORIZAÇÃO apenas de exames que alertam via e-mail: autorizacaomedica.pasbc.depes@bcb.gov.br", contact: "CASEMBRAPA ESPECIAIS PASSO A PASSO:\nWEB SAUDE > SOLICITAÇÕES > SOLICITAÇÕES DE SP-SADT > NOVA SOLICITAÇÃO > PREENCHER > ANEXAR ARQUIVOS (Clica no + , nos 3 pontinhos, download e anexa)" },
     { name: "CASSI / CASSI VIDA", font: "2709 / 18094", val: "90 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA DO PEDIDO", auth: "AUTORIZADOR WS", obs: "- PACIENTE ASSINA O PEDIDO\n⚠️ WEB SERVICE INOPERANTE: as autorizações devem ser solicitadas diretamente no site da Orizon. Preencher os campos 'Senha/Autorização' e 'Guia Prestador' na Shift com o número gerado.\nORIZON INOPERANTE: Ligue na Cassi.", contact: "Central Cassi: 4004-4550 ou 0800-729-0090\nCódigo do Prestador Sabin: 157724\nCNI NÃO ACEITA AUTORIZAÇÃO POSTERIOR.\nCHAT ONLINE: https://servicosonline.cassi.com.br/GASC/v2/Prestador\nLogin: CPF completo | Senha: seu e-mail sem @sabin.com.br + 3 primeiros dígitos do CPF" },
     { name: "CEAM BRASIL", font: "1879", val: "30 DIAS", rules: "A partir do dia 08/10/2024, estará SUSPENSO!!!", auth: "--", obs: "Atendimento suspenso conforme comunicado.", contact: "--" },
-    { name: "CIGNA", font: "3309", val: "--", rules: "Não tem regras fixas de conselho. Verificar porcentagem de pagamento na elegibilidade.\nPaciente assina pedido médico.", auth: "NÃO TEM", obs: "Anexar no atendimento os seguintes documentos:\n🔹Orçamento; Elegibilidade; Pedido médico; Identidade; Carteirinha (frente e verso); Carta de Garantia (se aplicável).\nO número da carteirinha corresponde ao campo 'Pers. ref. nº'", contact: "📧 CONTATO VIA E-MAIL:\nDúvidas: authorization@cigna.com\nOutras perguntas: providernetwork@CignaHealthcare.com\nReivindicações: providerquestions2@CignaHealthcare.com" },
+    { name: "CIGNA", font: "3309", val: "--", rules: "Não tem regras fixas de conselho. Verificar porcentagem de pagamento na elegibilidade.\nPaciente assina pedido médico.", auth: "NÃO TEM", obs: "Anexar no atendimento os seguintes documentos:\n🔹Orçamento; Elegibilidade; Pedido médico; Identidade; Carteirinha (frente e verso); Carta de Garantia (se aplicável).\nO número da carteirinha corresponds ao campo 'Pers. ref. nº'", contact: "📧 CONTATO VIA E-MAIL:\nDúvidas: authorization@cigna.com\nOutras perguntas: providernetwork@CignaHealthcare.com\nReivindicações: providerquestions2@CignaHealthcare.com" },
     { name: "CNU UNIMED\n- DEMAIS MATRICULAS / 865/067/229", font: "12740 / 12739", val: "60 DIAS", rules: "Só aceita (CRM e CRO)\nNÃO ACEITA CÓPIA. Obrigatório CID ou Indicação Clínica.", auth: "WS / SITE", obs: "- AUTORIZAÇÃO WS ou SITE\n- IMPRIMIR GUIA NO SITE\nSite: http://saw.trixti.com.br/saw/Logar.do?method=abrirSAW\nCódigo Prestador: 002305275\nInformar o número gerado na Shift no campo 2 do SAW para evitar duplicidade.", contact: "⚠️ SITE INOPERANTE (Matrícula 865 / Fonte 12739): Preencher guia manual Unimed, assinada pelo paciente. Ligar no (11) 2505-1111 p/ ver elegibilidade. Quando o site voltar, lançar.\nImportante: Demais Unimeds Intercâmbio SÓ ATENDER após o site retornar.\nSolicitações extracontratuais devem ser feitas pelo beneficiário na Unimed de origem." },
     { name: "CODEVASF (casec)", font: "42", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nACEITA COPIA DO PEDIDO ✅", auth: "SISTEMA", obs: "Solicite autorizações para procedimentos COM ALERTA NO SISTEMA.\n- Ordem de Escritório | Elegibilidade\n- PACIENTE ASSINA O PEDIDO (Matrícula e data obrigatórios)\nSalvar na O.S: Pedido Médico (PM nome) e Autorização (AUT nome).", contact: "📞 CENTRAL DE AUTORIZAÇÕES: (85) 3034-8888 / 0800 707 4772\nWhatsApp: (85) 99744-0780" },
     { name: "CONAB", font: "43", val: "30 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA COPIA", auth: "SISTEMA", obs: "- ELEGIBILIDADE\n- GUIA SHIFT", contact: "Contatos padrão via sistema." },
@@ -493,7 +556,7 @@ const dadosConvenios = [
     { name: "POLICIA MILITAR (TITULAR / DEPENDENTE)", font: "2166 / 2172", val: "INDET.", rules: "Aceita (CRM, COREN, NUTRICIONISTA, CRO, BUCO MAXILO, MÉDICO CUBANO-RMS, ENFERMEIRO).\nNÃO ACEITA CÓPIA.", auth: "WS / SITE", obs: "- AUTORIZAÇÃO NO SITE\n- COMPROVANTE POLICIA MILITAR / elegibilidade", contact: "Centro de Saúde da PM." },
     { name: "PORTO SEGURO", font: "211", val: "INDET.", rules: "Aceita (CRM e CRO)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SISTEMA", obs: "Solicitar autorização apenas para os exames que alertarem na SHIFT.\n- ELEGIBILIDADE | AUTORIZAÇÃO SITE | GUIA SHIFT", contact: "Porto Seguro Saúde." },
     { name: "POSTAL SAUDE CORREIOS", font: "245", val: "130 DIAS", rules: "Só aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- ELEGIBILIDADE\n- AUTORIZAÇÃO SITE\n- GUIA SHIFT / PACIENTE ASSINA PEDIDO", contact: "Postal Saúde." },
-    { name: "PREVENT SENIOR", font: "1297", val: "460 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SITE", obs: "- ANEXAR PEDIDO MEDICO COM DATA - SCANEAR (Renomear: PM + nome)\n⚠️ ATENÇÃO: NÃO INCLUIR PEDIDO SEM DATA, SERÁ GLOSADO.\n- PACIENTE ASSINA O PEDIDO.\nNo site: 1° Solicitar Procedimentos > 2° Emissão de Guia. Nº Senha: Repita o mesmo nº da guia operadora/SHIFT.\nSe o médico não tiver cadastro, cadastrar na hora.", contact: "Portal Prevent Senior." },
+    { name: "PREVENT SENIOR", font: "1297", val: "460 DIAS", rules: "Aceita (CRM, CRO e CRN)\nAceita cópia de pedido LEGÍVEL ✅", auth: "SITE", obs: "- ANEXAR PEDIDO MEDICO WITH DATA - SCANEAR (Renomear: PM + nome)\n⚠️ ATENÇÃO: NÃO INCLUIR PEDIDO SEM DATA, SERÁ GLOSADO.\n- PACIENTE ASSINA O PEDIDO.\nNo site: 1° Solicitar Procedimentos > 2° Emissão de Guia. Nº Senha: Repita o mesmo nº da guia operadora/SHIFT.\nSe o médico não tiver cadastro, cadastrar na hora.", contact: "Portal Prevent Senior." },
     { name: "PROASA", font: "8917", val: "90 DIAS", rules: "Aceita (CRM, CRO e CRN)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "- GUIA SHIFT\n- PACIENTE ASSINA O PEDIDO / GUIA: GUIA NO PRESTADOR", contact: "Suporte Proasa." },
     { name: "QUALLITY", font: "9211", val: "60 DIAS", rules: "Aceita (CRM)\nNÃO ACEITA CÓPIA", auth: "SITE", obs: "✔ Autorização do site assinada pelo beneficiário.\n✔ Cópia do documento do beneficiário (FRENTE E VERSO - LEGÍVEL). Cópia da carteirinha não é obrigatória.\n✔ Pedido médico ORIGINAL.\n⚠️ DOCUMENTOS DEVEM VIR IMPRESSOS AO FATURAMENTO e anexados na O.S.", contact: "Quality Saúde." },
     { name: "REDE TOTAL / ADM SAUDE", font: "21179", val: "30 DIAS", rules: "--", auth: "SITE", obs: "► Guia TISS assinada.\n► Guia de autorização.\n► Pedido médico válido.", contact: "Portal Rede Total." },
@@ -563,7 +626,9 @@ function switchTab(tabId) {
     document.getElementById(tabId).classList.add('active');
     
     if(tabId === 'vacinas') {
-        filtrarVacinas(); // Inicializa o contador de vacinas ao trocar de aba
+        filtrarVacinas();
+    } else if(tabId === 'glosas') {
+        filtrarGlosas();
     }
 }
 
@@ -594,12 +659,39 @@ function filtrarVacinas() {
     document.getElementById("counterVacinas").textContent = `${count} vacina(s) encontrada(s)`;
 }
 
+// Filtro de Busca da Aba Motivos de Glosa
+function filtrarGlosas() {
+    const input = document.getElementById("searchGlosas");
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById("glosasTable");
+    const tr = table.getElementsByTagName("tr");
+    let count = 0;
+
+    for (let i = 1; i < tr.length; i++) {
+        let match = false;
+        const td = tr[i].getElementsByTagName("td");
+        for (let j = 0; j < td.length; j++) {
+            if (td[j] && td[j].innerText.toLowerCase().includes(filter)) {
+                match = true;
+                break;
+            }
+        }
+        if (match) {
+            tr[i].style.display = "";
+            count++;
+        } else {
+            tr[i].style.display = "none";
+        }
+    }
+    document.getElementById("counterGlosas").textContent = `${count} motivo(s) encontrado(s)`;
+}
+
 // Renderização Inicial
 renderTable(dadosConvenios);
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("counterVacinas").textContent = `${document.querySelectorAll("#vacinasTable tbody tr").length} vacina(s) encontrada(s)`;
+    document.getElementById("counterGlosas").textContent = `${document.querySelectorAll("#glosasTable tbody tr").length} motivo(s) encontrado(s)`;
 });
 </script>
 
 </body>
-</html>
